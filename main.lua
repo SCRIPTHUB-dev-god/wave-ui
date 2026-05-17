@@ -52,12 +52,11 @@ local IcarusCore = {
 }
 
 local function CreateBlur(parent, intensity)
-    local blur = Instance.new("ImageLabel")
+    local blur = Instance.new("Frame")
     blur.Name = "AcrylicBlur"
     blur.Size = UDim2.new(1, 0, 1, 0)
-    blur.BackgroundTransparency = 1
-    blur.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-    blur.ImageTransparency = 1 - (intensity or 0.3)
+    blur.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    blur.BackgroundTransparency = 1 - (intensity or 0.3)
     blur.ZIndex = -1
     blur.Parent = parent
     
@@ -145,17 +144,12 @@ local function CreateRipple(parent, mousePos)
 end
 
 local function CreateGlow(parent, color, size)
-    local glow = Instance.new("ImageLabel")
+    local glow = Instance.new("Frame")
     glow.Name = "Glow"
     glow.Size = UDim2.new(1, size or 30, 1, size or 30)
     glow.Position = UDim2.new(0.5, 0, 0.5, 0)
     glow.AnchorPoint = Vector2.new(0.5, 0.5)
     glow.BackgroundTransparency = 1
-    glow.Image = "rbxassetid://5554236805"
-    glow.ImageColor3 = color
-    glow.ImageTransparency = 0.6
-    glow.ScaleType = Enum.ScaleType.Slice
-    glow.SliceCenter = Rect.new(23, 23, 277, 277)
     glow.ZIndex = -2
     glow.Parent = parent
     return glow
@@ -290,22 +284,24 @@ function IcarusCore:CreateToggleButton(windowRef)
         self.Themes[self.CurrentTheme].Corners
     }, 45)
     
-    local icon = Instance.new("ImageLabel")
+    local icon = Instance.new("TextLabel")
     icon.Size = UDim2.new(0, 30, 0, 30)
     icon.Position = UDim2.new(0.5, -15, 0.5, -15)
     icon.BackgroundTransparency = 1
-    icon.Image = "rbxassetid://7733955511"
-    icon.ImageColor3 = self.Themes[self.CurrentTheme].Accent
+    icon.Text = "I"
+    icon.Font = Enum.Font.GothamBold
+    icon.TextSize = 24
+    icon.TextColor3 = self.Themes[self.CurrentTheme].Accent
     icon.Parent = toggleBtn
     
     local pulseGlow = CreateGlow(toggleBtn, self.Themes[self.CurrentTheme].Accent, 50)
-    pulseGlow.ImageTransparency = 1
+    pulseGlow.BackgroundTransparency = 1
     
     spawn(function()
         while toggleBtn.Parent do
-            TweenObject(pulseGlow, {ImageTransparency = 0.4}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+            TweenObject(pulseGlow, {BackgroundTransparency = 0.4}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
             task.wait(1.5)
-            TweenObject(pulseGlow, {ImageTransparency = 1}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+            TweenObject(pulseGlow, {BackgroundTransparency = 1}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
             task.wait(1.5)
         end
     end)
@@ -327,7 +323,7 @@ function IcarusCore:CreateToggleButton(windowRef)
                     BackgroundColor3 = self.Themes[self.CurrentTheme].Background
                 }, 0.3)
                 TweenObject(icon, {
-                    ImageColor3 = self.Themes[self.CurrentTheme].Accent,
+                    TextColor3 = self.Themes[self.CurrentTheme].Accent,
                     Rotation = 0
                 }, 0.3)
             else
@@ -335,7 +331,7 @@ function IcarusCore:CreateToggleButton(windowRef)
                     BackgroundColor3 = self.Themes[self.CurrentTheme].Accent
                 }, 0.3)
                 TweenObject(icon, {
-                    ImageColor3 = Color3.fromRGB(255, 255, 255),
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
                     Rotation = 180
                 }, 0.3)
             end
@@ -379,22 +375,17 @@ function IcarusLibrary:SetWindows(config)
         CreateBlur(window, 0.6)
     end
     
-    local mainShadow = Instance.new("ImageLabel")
+    local mainShadow = Instance.new("Frame")
     mainShadow.Name = "Shadow"
     mainShadow.Size = UDim2.new(1, 60, 1, 60)
     mainShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
     mainShadow.AnchorPoint = Vector2.new(0.5, 0.5)
     mainShadow.BackgroundTransparency = 1
-    mainShadow.Image = "rbxassetid://5554236805"
-    mainShadow.ImageColor3 = IcarusCore.Themes[config.theme or "Dark"].Shadow
-    mainShadow.ImageTransparency = 0.5
-    mainShadow.ScaleType = Enum.ScaleType.Slice
-    mainShadow.SliceCenter = Rect.new(23, 23, 277, 277)
     mainShadow.ZIndex = -3
     mainShadow.Parent = window
     
     local outerGlow = CreateGlow(window, IcarusCore.Themes[config.theme or "Dark"].Accent, 80)
-    outerGlow.ImageTransparency = 0.8
+    outerGlow.BackgroundTransparency = 0.8
     
     local topbar = Instance.new("Frame")
     topbar.Name = "Topbar"
@@ -575,6 +566,43 @@ function IcarusLibrary:SetWindows(config)
             dragging = false
         end
     end)
+
+    local resizer = Instance.new("TextButton")
+    resizer.Name = "Resizer"
+    resizer.Size = UDim2.new(0, 16, 0, 16)
+    resizer.Position = UDim2.new(1, -16, 1, -16)
+    resizer.BackgroundTransparency = 1
+    resizer.Text = "◢"
+    resizer.TextColor3 = IcarusCore.Themes[config.theme or "Dark"].Corners
+    resizer.TextSize = 14
+    resizer.ZIndex = 50
+    resizer.Parent = window
+    
+    local isResizing = false
+    local resizeStartPos, startWindowSize
+    
+    resizer.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            isResizing = true
+            resizeStartPos = input.Position
+            startWindowSize = window.AbsoluteSize
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if isResizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - resizeStartPos
+            local newWidth = math.clamp(startWindowSize.X + delta.X, 450, 1200)
+            local newHeight = math.clamp(startWindowSize.Y + delta.Y, 300, 900)
+            window.Size = UDim2.new(0, newWidth, 0, newHeight)
+        end
+    end)
+    
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            isResizing = false
+        end
+    end)
     
     closeInput.MouseButton1Click:Connect(function()
         CreateRipple(closeBtn, Vector2.new(
@@ -582,7 +610,7 @@ function IcarusLibrary:SetWindows(config)
             closeBtn.AbsolutePosition.Y + closeBtn.AbsoluteSize.Y / 2
         ))
         TweenObject(window, {Size = UDim2.new(0, 0, 0, 0)}, 0.4, Enum.EasingStyle.Back)
-        TweenObject(mainShadow, {ImageTransparency = 1}, 0.4)
+        TweenObject(mainShadow, {BackgroundTransparency = 1}, 0.4)
         task.wait(0.4)
         window:Destroy()
         if IcarusCore.ToggleButton then
@@ -611,11 +639,13 @@ function IcarusLibrary:SetWindows(config)
                 Size = UDim2.new(0, 650, 0, 45),
                 Position = UDim2.new(0.5, -325, 1, -55)
             }, 0.4, Enum.EasingStyle.Back)
+            resizer.Visible = false
         else
             TweenObject(window, {
                 Size = UDim2.new(0, 650, 0, 450),
                 Position = UDim2.new(0.5, -325, 0.5, -225)
             }, 0.4, Enum.EasingStyle.Back)
+            resizer.Visible = true
         end
     end)
     
@@ -692,21 +722,21 @@ function IcarusLibrary:SetWindows(config)
             end)
         end
         
-        local loadingRing = Instance.new("ImageLabel")
+        local loadingRing = Instance.new("Frame")
         loadingRing.Size = UDim2.new(0, 70, 0, 70)
         loadingRing.Position = UDim2.new(0.5, -35, 0.5, -35)
         loadingRing.BackgroundTransparency = 1
-        loadingRing.Image = "rbxassetid://4965945816"
-        loadingRing.ImageColor3 = IcarusCore.Themes[config.theme or "Dark"].Accent
         loadingRing.Parent = loadingScreen
+        CreateStroke(loadingRing, IcarusCore.Themes[config.theme or "Dark"].Accent, 3)
+        CreateCorner(loadingRing, 999)
         
-        local innerRing = Instance.new("ImageLabel")
+        local innerRing = Instance.new("Frame")
         innerRing.Size = UDim2.new(0, 50, 0, 50)
         innerRing.Position = UDim2.new(0.5, -25, 0.5, -25)
         innerRing.BackgroundTransparency = 1
-        innerRing.Image = "rbxassetid://4965945816"
-        innerRing.ImageColor3 = IcarusCore.Themes[config.theme or "Dark"].AccentHover
         innerRing.Parent = loadingScreen
+        CreateStroke(innerRing, IcarusCore.Themes[config.theme or "Dark"].AccentHover, 3)
+        CreateCorner(innerRing, 999)
         
         local loadingText = Instance.new("TextLabel")
         loadingText.Size = UDim2.new(0, 250, 0, 35)
@@ -747,8 +777,8 @@ function IcarusLibrary:SetWindows(config)
         
         task.delay(2, function()
             TweenObject(loadingScreen, {BackgroundTransparency = 1}, 0.5)
-            TweenObject(loadingRing, {ImageTransparency = 1}, 0.5)
-            TweenObject(innerRing, {ImageTransparency = 1}, 0.5)
+            TweenObject(loadingRing, {BackgroundTransparency = 1}, 0.5)
+            TweenObject(innerRing, {BackgroundTransparency = 1}, 0.5)
             TweenObject(loadingText, {TextTransparency = 1}, 0.5)
             TweenObject(progressBar, {BackgroundTransparency = 1}, 0.5)
             task.wait(0.5)
@@ -785,12 +815,14 @@ function IcarusLibrary:AddTab(config)
     tabButton.Parent = self.TabContainer
     CreateCorner(tabButton, 8)
     
-    local icon = Instance.new("ImageLabel")
+    local icon = Instance.new("TextLabel")
     icon.Size = UDim2.new(0, 22, 0, 22)
     icon.Position = UDim2.new(0, 12, 0.5, -11)
     icon.BackgroundTransparency = 1
-    icon.Image = config.icon or "rbxassetid://7733956210"
-    icon.ImageColor3 = IcarusCore.Themes[self.Theme].Text
+    icon.Text = config.icon or "•"
+    icon.TextColor3 = IcarusCore.Themes[self.Theme].Text
+    icon.Font = Enum.Font.GothamBold
+    icon.TextSize = 18
     icon.Parent = tabButton
     
     local label = Instance.new("TextLabel")
@@ -834,12 +866,12 @@ function IcarusLibrary:AddTab(config)
         for _, tab in pairs(self.Tabs) do
             tab.Button.BackgroundColor3 = IcarusCore.Themes[self.Theme].CornersGroupbox
             tab.Content.Visible = false
-            TweenObject(tab.Icon, {ImageColor3 = IcarusCore.Themes[self.Theme].Text}, 0.2)
+            TweenObject(tab.Icon, {TextColor3 = IcarusCore.Themes[self.Theme].Text}, 0.2)
         end
         tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
         contentFrame.Visible = true
         self.CurrentTab = config.text
-        TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255)}, 0.2)
+        TweenObject(icon, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.2)
         CreateRipple(tabButton, Vector2.new(
             tabButton.AbsolutePosition.X + tabButton.AbsoluteSize.X / 2,
             tabButton.AbsolutePosition.Y + tabButton.AbsoluteSize.Y / 2
@@ -871,7 +903,7 @@ function IcarusLibrary:AddTab(config)
         tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
         contentFrame.Visible = true
         self.CurrentTab = config.text
-        icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        icon.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
     
     local tabFunctions = {}
@@ -886,12 +918,14 @@ function IcarusLibrary:AddTab(config)
         CreateCorner(groupbox, 10)
         CreateStroke(groupbox, IcarusCore.Themes[self.Theme].CornersGroupbox, 1.5)
         
-        local groupboxIcon = Instance.new("ImageLabel")
+        local groupboxIcon = Instance.new("TextLabel")
         groupboxIcon.Size = UDim2.new(0, 20, 0, 20)
         groupboxIcon.Position = UDim2.new(0, 12, 0, 12)
         groupboxIcon.BackgroundTransparency = 1
-        groupboxIcon.Image = config.icon or "rbxassetid://7733955511"
-        groupboxIcon.ImageColor3 = IcarusCore.Themes[self.Theme].Accent
+        groupboxIcon.Text = config.icon or "≡"
+        groupboxIcon.TextColor3 = IcarusCore.Themes[self.Theme].Accent
+        groupboxIcon.Font = Enum.Font.GothamBold
+        groupboxIcon.TextSize = 16
         groupboxIcon.Parent = groupbox
         
         local groupboxLabel = Instance.new("TextLabel")
@@ -1226,12 +1260,14 @@ function IcarusLibrary:AddTab(config)
         dropdownLabel.ZIndex = 11
         dropdownLabel.Parent = dropdownFrame
         
-        local dropdownIcon = Instance.new("ImageLabel")
+        local dropdownIcon = Instance.new("TextLabel")
         dropdownIcon.Size = UDim2.new(0, 18, 0, 18)
         dropdownIcon.Position = UDim2.new(1, -30, 0, 10)
         dropdownIcon.BackgroundTransparency = 1
-        dropdownIcon.Image = "rbxassetid://7733717447"
-        dropdownIcon.ImageColor3 = IcarusCore.Themes[self.Theme].Text
+        dropdownIcon.Text = "▼"
+        dropdownIcon.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        dropdownIcon.Font = Enum.Font.GothamBold
+        dropdownIcon.TextSize = 12
         dropdownIcon.Rotation = 0
         dropdownIcon.ZIndex = 11
         dropdownIcon.Parent = dropdownFrame
