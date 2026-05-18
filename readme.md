@@ -12,21 +12,14 @@ local win = Icarus:SetWindows({
     loadinggui = true
 })
 
-local tab = win:AddTab({
-    text = "Main",
-    icon = "rbxassetid://..."
-})
+local tab = win:AddTab({text = "Main"})
 
-tab:AddButton({text = "Click", callback = function() end})
-tab:AddToggle({text = "Enable", type = false, flag = "toggle1", callback = function(v) end})
-tab:AddSlider({text = "Speed", min = 0, max = 100, default = 50, flag = "speed", callback = function(v) end})
-tab:AddDropdown({text = "Select", options = {"A","B","C"}, multi = false, flag = "drop", callback = function(v) end})
-tab:AddTextbox({text = "Name", default = "", placeholder = "Enter...", flag = "name", callback = function(v) end})
-tab:AddColorpicker({text = "Color", default = Color3.new(1,1,1), flag = "color", callback = function(v) end})
-tab:AddKeybind({text = "Toggle GUI", default = Enum.KeyCode.P, flag = "keybind", callback = function() end})
-tab:AddParagraph({text = "Title", description = "Description here"})
-tab:AddLabel({text = "Simple label"})
-tab:AddDivider("Section Name")
+local leftGb = tab:AddLeftGroupbox({text = "Left Group"})
+leftGb:AddToggle({text = "Toggle", callback = function(v) end})
 
-local gb = tab:AddGroupbox({text = "Group", icon = "rbxassetid://..."})
+local rightGb = tab:AddRightGroupbox({text = "Right Group"})
+
+local tabbox = leftGb:AddTabbox({text = "Settings"})
+local tab1 = tabbox:AddTab({text = "General"})
+tab1:AddButton({text = "Click"})
 ```
