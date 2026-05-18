@@ -7,7 +7,6 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
-local TextService = game:GetService("TextService")
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -20,78 +19,91 @@ ScreenGui.IgnoreGuiInset = true
 ScreenGui.DisplayOrder = 999999999
 ScreenGui.Parent = CoreGui
 
+local LucideIcons = {
+    home = "rbxassetid://10723434711",
+    settings = "rbxassetid://10734950309",
+    user = "rbxassetid://10734896629",
+    shield = "rbxassetid://10723407389",
+    zap = "rbxassetid://10747372992",
+    box = "rbxassetid://10723343321",
+    activity = "rbxassetid://10723345088",
+    command = "rbxassetid://10723362834",
+    folder = "rbxassetid://10723369706",
+    code = "rbxassetid://10723354657",
+    cpu = "rbxassetid://10723363863",
+    target = "rbxassetid://10723415097",
+    eye = "rbxassetid://10723345118",
+    star = "rbxassetid://10723434811",
+    heart = "rbxassetid://10723370004",
+    layers = "rbxassetid://10723385697",
+    package = "rbxassetid://10723394478",
+    check = "rbxassetid://10723343350",
+    x = "rbxassetid://10747384394"
+}
+
 local IcarusCore = {
     Flags = {},
     ConfigPath = "IcarusConfig.json",
     Themes = {
         Dark = {
-            Background = Color3.fromRGB(18, 18, 24),
-            Secondary = Color3.fromRGB(24, 24, 32),
-            Tertiary = Color3.fromRGB(32, 32, 42),
-            Border = Color3.fromRGB(45, 45, 60),
+            Background = Color3.fromRGB(16, 16, 20),
+            Secondary = Color3.fromRGB(22, 22, 28),
+            Tertiary = Color3.fromRGB(28, 28, 36),
+            Border = Color3.fromRGB(40, 40, 52),
             Text = Color3.fromRGB(255, 255, 255),
-            TextDim = Color3.fromRGB(180, 180, 200),
+            TextDim = Color3.fromRGB(160, 160, 180),
             Accent = Color3.fromRGB(138, 43, 226),
             AccentHover = Color3.fromRGB(158, 63, 246),
-            AccentDark = Color3.fromRGB(118, 23, 206),
-            Success = Color3.fromRGB(40, 201, 64),
-            Warning = Color3.fromRGB(255, 189, 68),
-            Danger = Color3.fromRGB(255, 95, 86),
-            Info = Color3.fromRGB(52, 152, 219)
+            Success = Color3.fromRGB(34, 197, 94),
+            Warning = Color3.fromRGB(251, 191, 36),
+            Danger = Color3.fromRGB(239, 68, 68)
         },
         Purple = {
-            Background = Color3.fromRGB(22, 15, 32),
-            Secondary = Color3.fromRGB(28, 20, 40),
-            Tertiary = Color3.fromRGB(35, 25, 50),
-            Border = Color3.fromRGB(60, 40, 85),
+            Background = Color3.fromRGB(20, 12, 28),
+            Secondary = Color3.fromRGB(26, 18, 36),
+            Tertiary = Color3.fromRGB(32, 24, 44),
+            Border = Color3.fromRGB(52, 40, 68),
             Text = Color3.fromRGB(245, 240, 255),
-            TextDim = Color3.fromRGB(190, 180, 210),
-            Accent = Color3.fromRGB(160, 80, 240),
-            AccentHover = Color3.fromRGB(180, 100, 255),
-            AccentDark = Color3.fromRGB(140, 60, 220),
-            Success = Color3.fromRGB(50, 211, 74),
-            Warning = Color3.fromRGB(255, 199, 78),
-            Danger = Color3.fromRGB(255, 105, 96),
-            Info = Color3.fromRGB(62, 162, 229)
+            TextDim = Color3.fromRGB(180, 170, 200),
+            Accent = Color3.fromRGB(168, 85, 247),
+            AccentHover = Color3.fromRGB(192, 109, 255),
+            Success = Color3.fromRGB(34, 197, 94),
+            Warning = Color3.fromRGB(251, 191, 36),
+            Danger = Color3.fromRGB(239, 68, 68)
         },
         Blue = {
-            Background = Color3.fromRGB(15, 20, 28),
-            Secondary = Color3.fromRGB(20, 26, 36),
-            Tertiary = Color3.fromRGB(26, 33, 45),
-            Border = Color3.fromRGB(40, 55, 75),
+            Background = Color3.fromRGB(12, 18, 28),
+            Secondary = Color3.fromRGB(18, 24, 36),
+            Tertiary = Color3.fromRGB(24, 30, 44),
+            Border = Color3.fromRGB(40, 50, 68),
             Text = Color3.fromRGB(255, 255, 255),
-            TextDim = Color3.fromRGB(180, 190, 210),
-            Accent = Color3.fromRGB(52, 152, 219),
-            AccentHover = Color3.fromRGB(72, 172, 239),
-            AccentDark = Color3.fromRGB(32, 132, 199),
-            Success = Color3.fromRGB(40, 201, 64),
-            Warning = Color3.fromRGB(255, 189, 68),
-            Danger = Color3.fromRGB(255, 95, 86),
-            Info = Color3.fromRGB(52, 152, 219)
+            TextDim = Color3.fromRGB(160, 175, 200),
+            Accent = Color3.fromRGB(59, 130, 246),
+            AccentHover = Color3.fromRGB(79, 150, 255),
+            Success = Color3.fromRGB(34, 197, 94),
+            Warning = Color3.fromRGB(251, 191, 36),
+            Danger = Color3.fromRGB(239, 68, 68)
         }
     },
     CurrentTheme = "Dark",
     Keybinds = {},
     Notifications = {},
     ToggleButton = nil,
-    MainWindow = nil,
-    Watermark = nil,
-    FpsCounter = nil,
-    Elements = {}
+    MainWindow = nil
 }
 
 local function CreateCorner(parent, radius)
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, radius or 8)
+    corner.CornerRadius = UDim.new(0, radius or 6)
     corner.Parent = parent
     return corner
 end
 
-local function CreateStroke(parent, color, thickness, transparency)
+local function CreateStroke(parent, color, thickness)
     local stroke = Instance.new("UIStroke")
     stroke.Color = color
     stroke.Thickness = thickness or 1
-    stroke.Transparency = transparency or 0
+    stroke.Transparency = 0
     stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     stroke.Parent = parent
     return stroke
@@ -105,36 +117,15 @@ local function CreateGradient(parent, colors, rotation)
     return gradient
 end
 
-local function TweenObject(object, properties, duration, style, direction)
+local function TweenObject(object, properties, duration, style)
     if not object or not object.Parent then return end
     local tween = TweenService:Create(
         object,
-        TweenInfo.new(
-            duration or 0.25,
-            style or Enum.EasingStyle.Quad,
-            direction or Enum.EasingDirection.Out
-        ),
+        TweenInfo.new(duration or 0.2, style or Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         properties
     )
     tween:Play()
     return tween
-end
-
-local function CreateShadow(parent)
-    local shadow = Instance.new("ImageLabel")
-    shadow.Name = "Shadow"
-    shadow.Size = UDim2.new(1, 30, 1, 30)
-    shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-    shadow.BackgroundTransparency = 1
-    shadow.Image = "rbxassetid://5554236805"
-    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-    shadow.ImageTransparency = 0.7
-    shadow.ScaleType = Enum.ScaleType.Slice
-    shadow.SliceCenter = Rect.new(23, 23, 277, 277)
-    shadow.ZIndex = parent.ZIndex - 1
-    shadow.Parent = parent
-    return shadow
 end
 
 local function MakeDraggable(frame, handle)
@@ -157,14 +148,8 @@ local function MakeDraggable(frame, handle)
         end
     end)
     
-    handle.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
     UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - mousePos
             TweenObject(frame, {
                 Position = UDim2.new(
@@ -173,18 +158,9 @@ local function MakeDraggable(frame, handle)
                     framePos.Y.Scale,
                     framePos.Y.Offset + delta.Y
                 )
-            }, 0.1)
+            }, 0.08)
         end
     end)
-end
-
-local function GetTextSize(text, font, textSize)
-    local params = Instance.new("GetTextBoundsParams")
-    params.Text = text
-    params.Font = font
-    params.Size = textSize
-    params.Width = math.huge
-    return TextService:GetTextBoundsAsync(params)
 end
 
 function IcarusCore:Notify(config)
@@ -192,13 +168,13 @@ function IcarusCore:Notify(config)
     if not notifContainer then
         notifContainer = Instance.new("Frame")
         notifContainer.Name = "NotificationContainer"
-        notifContainer.Size = UDim2.new(0, 300, 1, 0)
-        notifContainer.Position = UDim2.new(1, -310, 0, 10)
+        notifContainer.Size = UDim2.new(0, 280, 1, 0)
+        notifContainer.Position = UDim2.new(1, -290, 0, 10)
         notifContainer.BackgroundTransparency = 1
         notifContainer.Parent = ScreenGui
         
         local notifList = Instance.new("UIListLayout")
-        notifList.Padding = UDim.new(0, 8)
+        notifList.Padding = UDim.new(0, 6)
         notifList.SortOrder = Enum.SortOrder.LayoutOrder
         notifList.VerticalAlignment = Enum.VerticalAlignment.Top
         notifList.Parent = notifContainer
@@ -211,10 +187,10 @@ function IcarusCore:Notify(config)
     notification.BorderSizePixel = 0
     notification.ClipsDescendants = true
     notification.Parent = notifContainer
-    CreateCorner(notification, 8)
+    CreateCorner(notification, 6)
     CreateStroke(notification, self.Themes[self.CurrentTheme].Border, 1)
     
-    local typeColor = self.Themes[self.CurrentTheme].Info
+    local typeColor = self.Themes[self.CurrentTheme].Accent
     if config.type == "success" then
         typeColor = self.Themes[self.CurrentTheme].Success
     elseif config.type == "warning" then
@@ -229,44 +205,25 @@ function IcarusCore:Notify(config)
     accentBar.BorderSizePixel = 0
     accentBar.Parent = notification
     
-    local icon = Instance.new("ImageLabel")
-    icon.Size = UDim2.new(0, 18, 0, 18)
-    icon.Position = UDim2.new(0, 12, 0, 8)
-    icon.BackgroundTransparency = 1
-    icon.ImageColor3 = typeColor
-    icon.Parent = notification
-    
-    if config.type == "success" then
-        icon.Image = "rbxassetid://7733955511"
-    elseif config.type == "warning" then
-        icon.Image = "rbxassetid://7743873633"
-    elseif config.type == "error" then
-        icon.Image = "rbxassetid://7743878857"
-    else
-        icon.Image = "rbxassetid://7733911816"
-    end
-    
     local title = Instance.new("TextLabel")
-    title.Name = "Title"
-    title.Size = UDim2.new(1, -45, 0, 24)
-    title.Position = UDim2.new(0, 35, 0, 6)
+    title.Size = UDim2.new(1, -20, 0, 20)
+    title.Position = UDim2.new(0, 12, 0, 6)
     title.BackgroundTransparency = 1
     title.Text = config.text or "Notification"
     title.TextColor3 = self.Themes[self.CurrentTheme].Text
     title.Font = Enum.Font.GothamBold
-    title.TextSize = 13
+    title.TextSize = 12
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = notification
     
     local description = Instance.new("TextLabel")
-    description.Name = "Description"
-    description.Size = UDim2.new(1, -20, 0, 35)
-    description.Position = UDim2.new(0, 12, 0, 30)
+    description.Size = UDim2.new(1, -20, 0, 32)
+    description.Position = UDim2.new(0, 12, 0, 26)
     description.BackgroundTransparency = 1
     description.Text = config.description or ""
     description.TextColor3 = self.Themes[self.CurrentTheme].TextDim
     description.Font = Enum.Font.Gotham
-    description.TextSize = 11
+    description.TextSize = 10
     description.TextXAlignment = Enum.TextXAlignment.Left
     description.TextYAlignment = Enum.TextYAlignment.Top
     description.TextWrapped = true
@@ -274,78 +231,117 @@ function IcarusCore:Notify(config)
     
     table.insert(self.Notifications, notification)
     
-    TweenObject(notification, {Size = UDim2.new(1, 0, 0, 72)}, 0.3, Enum.EasingStyle.Back)
+    TweenObject(notification, {Size = UDim2.new(1, 0, 0, 64)}, 0.25, Enum.EasingStyle.Back)
     
     task.delay(config.duration or 3, function()
-        TweenObject(notification, {Size = UDim2.new(1, 0, 0, 0)}, 0.25)
-        task.wait(0.25)
-        if notification.Parent then
-            notification:Destroy()
-        end
-        local index = table.find(self.Notifications, notification)
-        if index then
-            table.remove(self.Notifications, index)
-        end
+        TweenObject(notification, {Size = UDim2.new(1, 0, 0, 0)}, 0.2)
+        task.wait(0.2)
+        if notification.Parent then notification:Destroy() end
+        local idx = table.find(self.Notifications, notification)
+        if idx then table.remove(self.Notifications, idx) end
     end)
 end
 
-function IcarusCore:SaveConfig()
-    local config = {}
-    for flag, value in pairs(self.Flags) do
-        if type(value) == "table" then
-            config[flag] = value
-        elseif type(value) == "Color3" then
-            config[flag] = {value.R, value.G, value.B}
-        else
-            config[flag] = value
-        end
-    end
-    writefile(self.ConfigPath, HttpService:JSONEncode(config))
-    self:Notify({
-        text = "Configuration Saved",
-        description = "All settings saved successfully",
-        type = "success",
-        duration = 2
-    })
-end
-
-function IcarusCore:LoadConfig()
-    if isfile(self.ConfigPath) then
-        local success, data = pcall(function()
-            return HttpService:JSONDecode(readfile(self.ConfigPath))
-        end)
-        if success and data then
-            for flag, value in pairs(data) do
-                if type(value) == "table" and #value == 3 then
-                    self.Flags[flag] = Color3.new(value[1], value[2], value[3])
-                else
-                    self.Flags[flag] = value
-                end
-            end
-            self:Notify({
-                text = "Configuration Loaded",
-                description = "Settings restored successfully",
-                type = "success",
-                duration = 2
-            })
-            return true
-        end
-    end
-    return false
-end
-
-function IcarusCore:AddKeybind(key, callback)
-    table.insert(self.Keybinds, {Key = key, Callback = callback})
-end
-
-function IcarusCore:RemoveKeybind(key)
-    for i, keybind in ipairs(self.Keybinds) do
-        if keybind.Key == key then
-            table.remove(self.Keybinds, i)
-            return true
-        end
-    end
-    return false
+function IcarusCore:CreateDialog(title, message, callback)
+    local dialogBg = Instance.new("Frame")
+    dialogBg.Name = "DialogBackground"
+    dialogBg.Size = UDim2.new(1, 0, 1, 0)
+    dialogBg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    dialogBg.BackgroundTransparency = 0.5
+    dialogBg.BorderSizePixel = 0
+    dialogBg.ZIndex = 200
+    dialogBg.Parent = ScreenGui
+    
+    local dialog = Instance.new("Frame")
+    dialog.Name = "Dialog"
+    dialog.Size = UDim2.new(0, 300, 0, 140)
+    dialog.Position = UDim2.new(0.5, -150, 0.5, -70)
+    dialog.BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary
+    dialog.BorderSizePixel = 0
+    dialog.ZIndex = 201
+    dialog.Parent = dialogBg
+    CreateCorner(dialog, 8)
+    CreateStroke(dialog, self.Themes[self.CurrentTheme].Border, 1)
+    
+    local dialogTitle = Instance.new("TextLabel")
+    dialogTitle.Size = UDim2.new(1, -20, 0, 30)
+    dialogTitle.Position = UDim2.new(0, 10, 0, 10)
+    dialogTitle.BackgroundTransparency = 1
+    dialogTitle.Text = title
+    dialogTitle.TextColor3 = self.Themes[self.CurrentTheme].Text
+    dialogTitle.Font = Enum.Font.GothamBold
+    dialogTitle.TextSize = 14
+    dialogTitle.TextXAlignment = Enum.TextXAlignment.Left
+    dialogTitle.ZIndex = 202
+    dialogTitle.Parent = dialog
+    
+    local dialogMessage = Instance.new("TextLabel")
+    dialogMessage.Size = UDim2.new(1, -20, 0, 40)
+    dialogMessage.Position = UDim2.new(0, 10, 0, 45)
+    dialogMessage.BackgroundTransparency = 1
+    dialogMessage.Text = message
+    dialogMessage.TextColor3 = self.Themes[self.CurrentTheme].TextDim
+    dialogMessage.Font = Enum.Font.Gotham
+    dialogMessage.TextSize = 11
+    dialogMessage.TextXAlignment = Enum.TextXAlignment.Left
+    dialogMessage.TextYAlignment = Enum.TextYAlignment.Top
+    dialogMessage.TextWrapped = true
+    dialogMessage.ZIndex = 202
+    dialogMessage.Parent = dialog
+    
+    local yesButton = Instance.new("TextButton")
+    yesButton.Size = UDim2.new(0, 130, 0, 32)
+    yesButton.Position = UDim2.new(0, 10, 1, -42)
+    yesButton.BackgroundColor3 = self.Themes[self.CurrentTheme].Danger
+    yesButton.BorderSizePixel = 0
+    yesButton.Text = "Yes"
+    yesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    yesButton.Font = Enum.Font.GothamBold
+    yesButton.TextSize = 12
+    yesButton.AutoButtonColor = false
+    yesButton.ZIndex = 202
+    yesButton.Parent = dialog
+    CreateCorner(yesButton, 5)
+    
+    local noButton = Instance.new("TextButton")
+    noButton.Size = UDim2.new(0, 130, 0, 32)
+    noButton.Position = UDim2.new(1, -140, 1, -42)
+    noButton.BackgroundColor3 = self.Themes[self.CurrentTheme].Tertiary
+    noButton.BorderSizePixel = 0
+    noButton.Text = "No"
+    noButton.TextColor3 = self.Themes[self.CurrentTheme].Text
+    noButton.Font = Enum.Font.GothamBold
+    noButton.TextSize = 12
+    noButton.AutoButtonColor = false
+    noButton.ZIndex = 202
+    noButton.Parent = dialog
+    CreateCorner(noButton, 5)
+    
+    yesButton.MouseButton1Click:Connect(function()
+        dialogBg:Destroy()
+        if callback then callback(true) end
+    end)
+    
+    noButton.MouseButton1Click:Connect(function()
+        dialogBg:Destroy()
+        if callback then callback(false) end
+    end)
+    
+    yesButton.MouseEnter:Connect(function()
+        TweenObject(yesButton, {BackgroundColor3 = Color3.fromRGB(220, 50, 50)}, 0.15)
+    end)
+    
+    yesButton.MouseLeave:Connect(function()
+        TweenObject(yesButton, {BackgroundColor3 = self.Themes[self.CurrentTheme].Danger}, 0.15)
+    end)
+    
+    noButton.MouseEnter:Connect(function()
+        TweenObject(noButton, {BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary}, 0.15)
+    end)
+    
+    noButton.MouseLeave:Connect(function()
+        TweenObject(noButton, {BackgroundColor3 = self.Themes[self.CurrentTheme].Tertiary}, 0.15)
+    end)
 end
 
 function IcarusCore:CreateToggleButton(windowRef)
@@ -355,25 +351,26 @@ function IcarusCore:CreateToggleButton(windowRef)
     
     local toggleBtn = Instance.new("Frame")
     toggleBtn.Name = "IcarusToggle"
-    toggleBtn.Size = UDim2.new(0, 45, 0, 45)
-    toggleBtn.Position = UDim2.new(0, 15, 0.5, -22)
+    toggleBtn.Size = UDim2.new(0, 120, 0, 40)
+    toggleBtn.Position = UDim2.new(0, 15, 0.5, -20)
     toggleBtn.BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Active = true
     toggleBtn.Parent = ScreenGui
-    CreateCorner(toggleBtn, 8)
+    CreateCorner(toggleBtn, 6)
     CreateStroke(toggleBtn, self.Themes[self.CurrentTheme].Accent, 2)
-    CreateShadow(toggleBtn)
     
     MakeDraggable(toggleBtn)
     
-    local icon = Instance.new("ImageLabel")
-    icon.Size = UDim2.new(0, 24, 0, 24)
-    icon.Position = UDim2.new(0.5, -12, 0.5, -12)
-    icon.BackgroundTransparency = 1
-    icon.Image = "rbxassetid://7734053426"
-    icon.ImageColor3 = self.Themes[self.CurrentTheme].Accent
-    icon.Parent = toggleBtn
+    local toggleLabel = Instance.new("TextLabel")
+    toggleLabel.Size = UDim2.new(1, -10, 1, 0)
+    toggleLabel.Position = UDim2.new(0, 5, 0, 0)
+    toggleLabel.BackgroundTransparency = 1
+    toggleLabel.Text = "Toggle GUI"
+    toggleLabel.TextColor3 = self.Themes[self.CurrentTheme].Accent
+    toggleLabel.Font = Enum.Font.GothamBold
+    toggleLabel.TextSize = 12
+    toggleLabel.Parent = toggleBtn
     
     local clickDetector = Instance.new("TextButton")
     clickDetector.Size = UDim2.new(1, 0, 1, 0)
@@ -388,132 +385,66 @@ function IcarusCore:CreateToggleButton(windowRef)
             windowRef.Visible = isVisible
             
             if isVisible then
-                TweenObject(toggleBtn, {BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary}, 0.2)
-                TweenObject(icon, {ImageColor3 = self.Themes[self.CurrentTheme].Accent, Rotation = 0}, 0.2)
+                TweenObject(toggleBtn, {BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary}, 0.15)
+                TweenObject(toggleLabel, {TextColor3 = self.Themes[self.CurrentTheme].Accent}, 0.15)
             else
-                TweenObject(toggleBtn, {BackgroundColor3 = self.Themes[self.CurrentTheme].Accent}, 0.2)
-                TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255), Rotation = 90}, 0.2)
+                TweenObject(toggleBtn, {BackgroundColor3 = self.Themes[self.CurrentTheme].Accent}, 0.15)
+                TweenObject(toggleLabel, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.15)
             end
         end
     end)
     
     clickDetector.MouseEnter:Connect(function()
-        TweenObject(toggleBtn, {Size = UDim2.new(0, 50, 0, 50)}, 0.15, Enum.EasingStyle.Back)
+        TweenObject(toggleBtn, {Size = UDim2.new(0, 125, 0, 42)}, 0.12, Enum.EasingStyle.Back)
     end)
     
     clickDetector.MouseLeave:Connect(function()
-        TweenObject(toggleBtn, {Size = UDim2.new(0, 45, 0, 45)}, 0.15)
+        TweenObject(toggleBtn, {Size = UDim2.new(0, 120, 0, 40)}, 0.12)
     end)
     
     self.ToggleButton = toggleBtn
     return toggleBtn
 end
 
-function IcarusCore:CreateWatermark(text)
-    if self.Watermark then
-        self.Watermark:Destroy()
-    end
-    
-    local watermark = Instance.new("Frame")
-    watermark.Name = "Watermark"
-    watermark.Size = UDim2.new(0, 200, 0, 30)
-    watermark.Position = UDim2.new(0.5, -100, 0, 10)
-    watermark.BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary
-    watermark.BorderSizePixel = 0
-    watermark.Parent = ScreenGui
-    CreateCorner(watermark, 6)
-    CreateStroke(watermark, self.Themes[self.CurrentTheme].Border, 1)
-    
-    local watermarkText = Instance.new("TextLabel")
-    watermarkText.Size = UDim2.new(1, -20, 1, 0)
-    watermarkText.Position = UDim2.new(0, 10, 0, 0)
-    watermarkText.BackgroundTransparency = 1
-    watermarkText.Text = text or "Icarus Library"
-    watermarkText.TextColor3 = self.Themes[self.CurrentTheme].Text
-    watermarkText.Font = Enum.Font.GothamBold
-    watermarkText.TextSize = 12
-    watermarkText.Parent = watermark
-    
-    self.Watermark = watermark
-    return watermark
-end
-
-function IcarusCore:CreateFpsCounter()
-    if self.FpsCounter then
-        self.FpsCounter:Destroy()
-    end
-    
-    local fpsFrame = Instance.new("Frame")
-    fpsFrame.Name = "FpsCounter"
-    fpsFrame.Size = UDim2.new(0, 80, 0, 30)
-    fpsFrame.Position = UDim2.new(1, -90, 0, 10)
-    fpsFrame.BackgroundColor3 = self.Themes[self.CurrentTheme].Secondary
-    fpsFrame.BorderSizePixel = 0
-    fpsFrame.Parent = ScreenGui
-    CreateCorner(fpsFrame, 6)
-    CreateStroke(fpsFrame, self.Themes[self.CurrentTheme].Border, 1)
-    
-    local fpsLabel = Instance.new("TextLabel")
-    fpsLabel.Size = UDim2.new(1, 0, 1, 0)
-    fpsLabel.BackgroundTransparency = 1
-    fpsLabel.Text = "FPS: 60"
-    fpsLabel.TextColor3 = self.Themes[self.CurrentTheme].Success
-    fpsLabel.Font = Enum.Font.GothamBold
-    fpsLabel.TextSize = 12
-    fpsLabel.Parent = fpsFrame
-    
-    local lastTime = tick()
-    local fps = 60
-    
-    RunService.RenderStepped:Connect(function()
-        local currentTime = tick()
-        local delta = currentTime - lastTime
-        lastTime = currentTime
-        
-        fps = math.floor(1 / delta)
-        fpsLabel.Text = "FPS: " .. fps
-        
-        if fps >= 55 then
-            fpsLabel.TextColor3 = self.Themes[self.CurrentTheme].Success
-        elseif fps >= 30 then
-            fpsLabel.TextColor3 = self.Themes[self.CurrentTheme].Warning
-        else
-            fpsLabel.TextColor3 = self.Themes[self.CurrentTheme].Danger
-        end
-    end)
-    
-    self.FpsCounter = fpsFrame
-    return fpsFrame
-end
-
 function IcarusLibrary:SetWindows(config)
-    local windowSize = config.size or UDim2.new(0, 480, 0, 300)
+    local width = 480
+    local height = 300
+    
+    if config.size then
+        if type(config.size) == "table" then
+            width = config.size[1] or config.size.x or 480
+            height = config.size[2] or config.size.y or 300
+        end
+    end
     
     local window = Instance.new("Frame")
     window.Name = "IcarusWindow"
-    window.Size = windowSize
-    window.Position = UDim2.new(0.5, -windowSize.X.Offset / 2, 0.5, -windowSize.Y.Offset / 2)
+    window.Size = UDim2.new(0, width, 0, height)
+    window.Position = UDim2.new(0.5, -width / 2, 0.5, -height / 2)
     window.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Background
     window.BorderSizePixel = 0
     window.ClipsDescendants = false
     window.Active = true
     window.Visible = true
     window.Parent = ScreenGui
-    CreateCorner(window, 10)
+    CreateCorner(window, 8)
     CreateStroke(window, IcarusCore.Themes[config.theme or "Dark"].Border, 1)
-    CreateShadow(window)
+    
+    if config.settransparent and config.settransparent > 0 then
+        window.BackgroundTransparency = config.settransparent
+    end
     
     local topbar = Instance.new("Frame")
     topbar.Name = "Topbar"
-    topbar.Size = UDim2.new(1, 0, 0, 35)
+    topbar.Size = UDim2.new(1, 0, 0, 32)
     topbar.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Secondary
     topbar.BorderSizePixel = 0
     topbar.Parent = window
-    CreateCorner(topbar, 10)
+    CreateCorner(topbar, 8)
     
     local topbarCover = Instance.new("Frame")
-    topbarCover.Size = UDim2.new(1, 0, 0, 10)
-    topbarCover.Position = UDim2.new(0, 0, 1, -10)
+    topbarCover.Size = UDim2.new(1, 0, 0, 8)
+    topbarCover.Position = UDim2.new(0, 0, 1, -8)
     topbarCover.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Secondary
     topbarCover.BorderSizePixel = 0
     topbarCover.Parent = topbar
@@ -522,27 +453,27 @@ function IcarusLibrary:SetWindows(config)
     
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Name = "Title"
-    titleLabel.Size = UDim2.new(1, -100, 1, 0)
-    titleLabel.Position = UDim2.new(0, 12, 0, 0)
+    titleLabel.Size = UDim2.new(1, -90, 1, 0)
+    titleLabel.Position = UDim2.new(0, 10, 0, 0)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = config.text or "Icarus Library"
     titleLabel.TextColor3 = IcarusCore.Themes[config.theme or "Dark"].Text
     titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextSize = 14
+    titleLabel.TextSize = 13
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = topbar
     
     local buttonContainer = Instance.new("Frame")
     buttonContainer.Name = "Buttons"
-    buttonContainer.Size = UDim2.new(0, 65, 0, 18)
-    buttonContainer.Position = UDim2.new(1, -75, 0.5, -9)
+    buttonContainer.Size = UDim2.new(0, 60, 0, 16)
+    buttonContainer.Position = UDim2.new(1, -70, 0.5, -8)
     buttonContainer.BackgroundTransparency = 1
     buttonContainer.Parent = topbar
     
     local closeBtn = Instance.new("TextButton")
     closeBtn.Name = "Close"
-    closeBtn.Size = UDim2.new(0, 18, 0, 18)
-    closeBtn.Position = UDim2.new(0, 47, 0, 0)
+    closeBtn.Size = UDim2.new(0, 16, 0, 16)
+    closeBtn.Position = UDim2.new(0, 44, 0, 0)
     closeBtn.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Danger
     closeBtn.BorderSizePixel = 0
     closeBtn.Text = ""
@@ -552,8 +483,8 @@ function IcarusLibrary:SetWindows(config)
     
     local minimizeBtn = Instance.new("TextButton")
     minimizeBtn.Name = "Minimize"
-    minimizeBtn.Size = UDim2.new(0, 18, 0, 18)
-    minimizeBtn.Position = UDim2.new(0, 24, 0, 0)
+    minimizeBtn.Size = UDim2.new(0, 16, 0, 16)
+    minimizeBtn.Position = UDim2.new(0, 22, 0, 0)
     minimizeBtn.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Warning
     minimizeBtn.BorderSizePixel = 0
     minimizeBtn.Text = ""
@@ -563,7 +494,7 @@ function IcarusLibrary:SetWindows(config)
     
     local toggleBtn = Instance.new("TextButton")
     toggleBtn.Name = "Toggle"
-    toggleBtn.Size = UDim2.new(0, 18, 0, 18)
+    toggleBtn.Size = UDim2.new(0, 16, 0, 16)
     toggleBtn.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Success
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Text = ""
@@ -573,91 +504,65 @@ function IcarusLibrary:SetWindows(config)
     
     local tabContainer = Instance.new("ScrollingFrame")
     tabContainer.Name = "TabContainer"
-    tabContainer.Size = UDim2.new(0, 130, 1, -43)
-    tabContainer.Position = UDim2.new(0, 8, 0, 43)
+    tabContainer.Size = UDim2.new(0, 110, 1, -40)
+    tabContainer.Position = UDim2.new(0, 6, 0, 38)
     tabContainer.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Secondary
     tabContainer.BorderSizePixel = 0
-    tabContainer.ScrollBarThickness = 3
+    tabContainer.ScrollBarThickness = 2
     tabContainer.ScrollBarImageColor3 = IcarusCore.Themes[config.theme or "Dark"].Accent
     tabContainer.Parent = window
-    CreateCorner(tabContainer, 6)
+    CreateCorner(tabContainer, 5)
     
     local tabList = Instance.new("UIListLayout")
-    tabList.Padding = UDim.new(0, 4)
+    tabList.Padding = UDim.new(0, 3)
     tabList.SortOrder = Enum.SortOrder.LayoutOrder
     tabList.Parent = tabContainer
     
     local tabPadding = Instance.new("UIPadding")
-    tabPadding.PaddingTop = UDim.new(0, 6)
-    tabPadding.PaddingBottom = UDim.new(0, 6)
-    tabPadding.PaddingLeft = UDim.new(0, 6)
-    tabPadding.PaddingRight = UDim.new(0, 6)
+    tabPadding.PaddingTop = UDim.new(0, 5)
+    tabPadding.PaddingBottom = UDim.new(0, 5)
+    tabPadding.PaddingLeft = UDim.new(0, 5)
+    tabPadding.PaddingRight = UDim.new(0, 5)
     tabPadding.Parent = tabContainer
     
     tabList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        tabContainer.CanvasSize = UDim2.new(0, 0, 0, tabList.AbsoluteContentSize.Y + 12)
+        tabContainer.CanvasSize = UDim2.new(0, 0, 0, tabList.AbsoluteContentSize.Y + 10)
     end)
     
     local contentContainer = Instance.new("Frame")
     contentContainer.Name = "ContentContainer"
-    contentContainer.Size = UDim2.new(1, -146, 1, -43)
-    contentContainer.Position = UDim2.new(0, 146, 0, 43)
+    contentContainer.Size = UDim2.new(1, -122, 1, -40)
+    contentContainer.Position = UDim2.new(0, 122, 0, 38)
     contentContainer.BackgroundTransparency = 1
     contentContainer.Parent = window
     
-    local searchBox = Instance.new("TextBox")
-    searchBox.Name = "SearchBox"
-    searchBox.Size = UDim2.new(0, 150, 0, 24)
-    searchBox.Position = UDim2.new(1, -160, 0, 5.5)
-    searchBox.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Tertiary
-    searchBox.BorderSizePixel = 0
-    searchBox.Text = ""
-    searchBox.PlaceholderText = "  🔍 Search..."
-    searchBox.TextColor3 = IcarusCore.Themes[config.theme or "Dark"].Text
-    searchBox.PlaceholderColor3 = IcarusCore.Themes[config.theme or "Dark"].TextDim
-    searchBox.Font = Enum.Font.Gotham
-    searchBox.TextSize = 11
-    searchBox.TextXAlignment = Enum.TextXAlignment.Left
-    searchBox.Parent = topbar
-    CreateCorner(searchBox, 5)
-    CreateStroke(searchBox, IcarusCore.Themes[config.theme or "Dark"].Border, 1)
-    
-    searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-        local searchText = searchBox.Text:lower()
-        for _, tab in pairs(contentContainer:GetChildren()) do
-            if tab:IsA("ScrollingFrame") then
-                for _, element in pairs(tab:GetChildren()) do
-                    if element:IsA("GuiObject") and element.Name ~= "UIListLayout" and element.Name ~= "UIPadding" then
-                        local textLabel = element:FindFirstChildWhichIsA("TextLabel", true)
-                        if textLabel then
-                            local elementText = textLabel.Text:lower()
-                            element.Visible = searchText == "" or elementText:find(searchText) ~= nil
-                        end
+    closeBtn.MouseButton1Click:Connect(function()
+        IcarusCore:CreateDialog(
+            "Close GUI",
+            "Are you sure you want to close this GUI?",
+            function(result)
+                if result then
+                    TweenObject(window, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Back)
+                    task.wait(0.2)
+                    window:Destroy()
+                    if IcarusCore.ToggleButton then
+                        IcarusCore.ToggleButton:Destroy()
                     end
                 end
             end
-        end
-    end)
-    
-    closeBtn.MouseButton1Click:Connect(function()
-        TweenObject(window, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back)
-        task.wait(0.25)
-        window:Destroy()
-        if IcarusCore.ToggleButton then
-            IcarusCore.ToggleButton:Destroy()
-        end
+        )
     end)
     
     closeBtn.MouseEnter:Connect(function()
-        TweenObject(closeBtn, {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(0, 46, 0, -1)}, 0.12)
+        TweenObject(closeBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 43, 0, -1)}, 0.1)
     end)
     
     closeBtn.MouseLeave:Connect(function()
-        TweenObject(closeBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 47, 0, 0)}, 0.12)
+        TweenObject(closeBtn, {Size = UDim2.new(0, 16, 0, 16), Position = UDim2.new(0, 44, 0, 0)}, 0.1)
     end)
     
     local minimized = false
-    local originalSize = windowSize
+    local originalSize = window.Size
     local originalPos = window.Position
     
     minimizeBtn.MouseButton1Click:Connect(function()
@@ -666,46 +571,46 @@ function IcarusLibrary:SetWindows(config)
             originalSize = window.Size
             originalPos = window.Position
             TweenObject(window, {
-                Size = UDim2.new(0, windowSize.X.Offset, 0, 35),
-                Position = UDim2.new(0.5, -windowSize.X.Offset / 2, 1, -45)
-            }, 0.25, Enum.EasingStyle.Back)
+                Size = UDim2.new(0, width, 0, 32),
+                Position = UDim2.new(0.5, -width / 2, 1, -42)
+            }, 0.2, Enum.EasingStyle.Back)
         else
             TweenObject(window, {
                 Size = originalSize,
                 Position = originalPos
-            }, 0.25, Enum.EasingStyle.Back)
+            }, 0.2, Enum.EasingStyle.Back)
         end
     end)
     
     minimizeBtn.MouseEnter:Connect(function()
-        TweenObject(minimizeBtn, {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(0, 23, 0, -1)}, 0.12)
+        TweenObject(minimizeBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 21, 0, -1)}, 0.1)
     end)
     
     minimizeBtn.MouseLeave:Connect(function()
-        TweenObject(minimizeBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 24, 0, 0)}, 0.12)
+        TweenObject(minimizeBtn, {Size = UDim2.new(0, 16, 0, 16), Position = UDim2.new(0, 22, 0, 0)}, 0.1)
     end)
     
     toggleBtn.MouseButton1Click:Connect(function()
-        TweenObject(window, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back)
-        task.wait(0.25)
+        TweenObject(window, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Back)
+        task.wait(0.2)
         window.Visible = false
-        TweenObject(window, {Size = windowSize}, 0.01)
+        TweenObject(window, {Size = UDim2.new(0, width, 0, height)}, 0.01)
         
         IcarusCore:CreateToggleButton(window)
         IcarusCore:Notify({
             text = "Toggle Mode",
-            description = "Use square button to toggle GUI",
-            type = "info",
+            description = "GUI converted to toggle button",
+            type = "success",
             duration = 2
         })
     end)
     
     toggleBtn.MouseEnter:Connect(function()
-        TweenObject(toggleBtn, {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(0, -1, 0, -1)}, 0.12)
+        TweenObject(toggleBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, -1, 0, -1)}, 0.1)
     end)
     
     toggleBtn.MouseLeave:Connect(function()
-        TweenObject(toggleBtn, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 0, 0, 0)}, 0.12)
+        TweenObject(toggleBtn, {Size = UDim2.new(0, 16, 0, 16), Position = UDim2.new(0, 0, 0, 0)}, 0.1)
     end)
     
     if config.loadinggui then
@@ -716,50 +621,39 @@ function IcarusLibrary:SetWindows(config)
         loadingScreen.BorderSizePixel = 0
         loadingScreen.ZIndex = 100
         loadingScreen.Parent = window
-        CreateCorner(loadingScreen, 10)
+        CreateCorner(loadingScreen, 8)
         
         local loadingRing = Instance.new("ImageLabel")
-        loadingRing.Size = UDim2.new(0, 50, 0, 50)
-        loadingRing.Position = UDim2.new(0.5, -25, 0.5, -25)
+        loadingRing.Size = UDim2.new(0, 40, 0, 40)
+        loadingRing.Position = UDim2.new(0.5, -20, 0.5, -20)
         loadingRing.BackgroundTransparency = 1
         loadingRing.Image = "rbxassetid://4965945816"
         loadingRing.ImageColor3 = IcarusCore.Themes[config.theme or "Dark"].Accent
         loadingRing.Parent = loadingScreen
         
         local loadingText = Instance.new("TextLabel")
-        loadingText.Size = UDim2.new(0, 200, 0, 25)
-        loadingText.Position = UDim2.new(0.5, -100, 0.5, 35)
+        loadingText.Size = UDim2.new(0, 180, 0, 22)
+        loadingText.Position = UDim2.new(0.5, -90, 0.5, 28)
         loadingText.BackgroundTransparency = 1
         loadingText.Text = "Loading..."
         loadingText.TextColor3 = IcarusCore.Themes[config.theme or "Dark"].Text
         loadingText.Font = Enum.Font.GothamBold
-        loadingText.TextSize = 13
+        loadingText.TextSize = 12
         loadingText.Parent = loadingScreen
-        
-        local progressBar = Instance.new("Frame")
-        progressBar.Size = UDim2.new(0, 0, 0, 2)
-        progressBar.Position = UDim2.new(0.5, -80, 0.5, 65)
-        progressBar.BackgroundColor3 = IcarusCore.Themes[config.theme or "Dark"].Accent
-        progressBar.BorderSizePixel = 0
-        progressBar.Parent = loadingScreen
-        CreateCorner(progressBar, 999)
         
         spawn(function()
             while loadingScreen.Parent do
-                TweenObject(loadingRing, {Rotation = 360}, 1.2, Enum.EasingStyle.Linear)
-                task.wait(1.2)
+                TweenObject(loadingRing, {Rotation = 360}, 1, Enum.EasingStyle.Linear)
+                task.wait(1)
                 loadingRing.Rotation = 0
             end
         end)
         
-        TweenObject(progressBar, {Size = UDim2.new(0, 160, 0, 2)}, 1.3)
-        
-        task.delay(1.5, function()
-            TweenObject(loadingScreen, {BackgroundTransparency = 1}, 0.3)
-            TweenObject(loadingRing, {ImageTransparency = 1}, 0.3)
-            TweenObject(loadingText, {TextTransparency = 1}, 0.3)
-            TweenObject(progressBar, {BackgroundTransparency = 1}, 0.3)
-            task.wait(0.3)
+        task.delay(1.2, function()
+            TweenObject(loadingScreen, {BackgroundTransparency = 1}, 0.25)
+            TweenObject(loadingRing, {ImageTransparency = 1}, 0.25)
+            TweenObject(loadingText, {TextTransparency = 1}, 0.25)
+            task.wait(0.25)
             loadingScreen:Destroy()
         end)
     end
@@ -782,283 +676,390 @@ end
 function IcarusLibrary:AddTab(config)
     local tabButton = Instance.new("TextButton")
     tabButton.Name = config.text
-    tabButton.Size = UDim2.new(1, 0, 0, 32)
+    tabButton.Size = UDim2.new(1, 0, 0, 28)
     tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
     tabButton.BorderSizePixel = 0
-    tabButton.Text = ""
+    tabButton.Text = config.text
+    tabButton.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+    tabButton.Font = Enum.Font.GothamBold
+    tabButton.TextSize = 11
     tabButton.AutoButtonColor = false
     tabButton.Parent = self.TabContainer
-    CreateCorner(tabButton, 5)
+    CreateCorner(tabButton, 4)
     
-    local icon = Instance.new("ImageLabel")
-    icon.Size = UDim2.new(0, 18, 0, 18)
-    icon.Position = UDim2.new(0, 8, 0.5, -9)
-    icon.BackgroundTransparency = 1
-    icon.Image = config.icon or "rbxassetid://7734053426"
-    icon.ImageColor3 = IcarusCore.Themes[self.Theme].TextDim
-    icon.Parent = tabButton
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -35, 1, 0)
-    label.Position = UDim2.new(0, 30, 0, 0)
-    label.BackgroundTransparency = 1
-    label.Text = config.text
-    label.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
-    label.Font = Enum.Font.GothamSemibold
-    label.TextSize = 12
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = tabButton
-    
-    local contentFrame = Instance.new("ScrollingFrame")
+    local contentFrame = Instance.new("Frame")
     contentFrame.Name = config.text
     contentFrame.Size = UDim2.new(1, 0, 1, 0)
     contentFrame.BackgroundTransparency = 1
-    contentFrame.BorderSizePixel = 0
-    contentFrame.ScrollBarThickness = 3
-    contentFrame.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
     contentFrame.Visible = false
     contentFrame.Parent = self.ContentContainer
     
-    local contentList = Instance.new("UIListLayout")
-    contentList.Padding = UDim.new(0, 6)
-    contentList.SortOrder = Enum.SortOrder.LayoutOrder
-    contentList.Parent = contentFrame
+    local leftColumn = Instance.new("ScrollingFrame")
+    leftColumn.Name = "LeftColumn"
+    leftColumn.Size = UDim2.new(0.5, -4, 1, 0)
+    leftColumn.Position = UDim2.new(0, 0, 0, 0)
+    leftColumn.BackgroundTransparency = 1
+    leftColumn.BorderSizePixel = 0
+    leftColumn.ScrollBarThickness = 2
+    leftColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
+    leftColumn.Parent = contentFrame
     
-    local padding = Instance.new("UIPadding")
-    padding.PaddingTop = UDim.new(0, 6)
-    padding.PaddingBottom = UDim.new(0, 6)
-    padding.PaddingLeft = UDim.new(0, 6)
-    padding.PaddingRight = UDim.new(0, 8)
-    padding.Parent = contentFrame
+    local leftList = Instance.new("UIListLayout")
+    leftList.Padding = UDim.new(0, 5)
+    leftList.SortOrder = Enum.SortOrder.LayoutOrder
+    leftList.Parent = leftColumn
     
-    contentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        contentFrame.CanvasSize = UDim2.new(0, 0, 0, contentList.AbsoluteContentSize.Y + 12)
+    local leftPadding = Instance.new("UIPadding")
+    leftPadding.PaddingTop = UDim.new(0, 5)
+    leftPadding.PaddingBottom = UDim.new(0, 5)
+    leftPadding.PaddingLeft = UDim.new(0, 5)
+    leftPadding.PaddingRight = UDim.new(0, 3)
+    leftPadding.Parent = leftColumn
+    
+    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        leftColumn.CanvasSize = UDim2.new(0, 0, 0, leftList.AbsoluteContentSize.Y + 10)
+    end)
+    
+    local rightColumn = Instance.new("ScrollingFrame")
+    rightColumn.Name = "RightColumn"
+    rightColumn.Size = UDim2.new(0.5, -4, 1, 0)
+    rightColumn.Position = UDim2.new(0.5, 4, 0, 0)
+    rightColumn.BackgroundTransparency = 1
+    rightColumn.BorderSizePixel = 0
+    rightColumn.ScrollBarThickness = 2
+    rightColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
+    rightColumn.Parent = contentFrame
+    
+    local rightList = Instance.new("UIListLayout")
+    rightList.Padding = UDim.new(0, 5)
+    rightList.SortOrder = Enum.SortOrder.LayoutOrder
+    rightList.Parent = rightColumn
+    
+    local rightPadding = Instance.new("UIPadding")
+    rightPadding.PaddingTop = UDim.new(0, 5)
+    rightPadding.PaddingBottom = UDim.new(0, 5)
+    rightPadding.PaddingLeft = UDim.new(0, 3)
+    rightPadding.PaddingRight = UDim.new(0, 5)
+    rightPadding.Parent = rightColumn
+    
+    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        rightColumn.CanvasSize = UDim2.new(0, 0, 0, rightList.AbsoluteContentSize.Y + 10)
     end)
     
     tabButton.MouseButton1Click:Connect(function()
         for _, tab in pairs(self.Tabs) do
-            TweenObject(tab.Button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.15)
-            TweenObject(tab.Icon, {ImageColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.15)
-            TweenObject(tab.Label, {TextColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.15)
+            TweenObject(tab.Button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.12)
+            TweenObject(tab.Button, {TextColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.12)
             tab.Content.Visible = false
         end
-        TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.15)
-        TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255)}, 0.15)
-        TweenObject(label, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.15)
+        TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.12)
+        TweenObject(tabButton, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.12)
         contentFrame.Visible = true
         self.CurrentTab = config.text
     end)
     
     tabButton.MouseEnter:Connect(function()
         if self.CurrentTab ~= config.text then
-            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.12)
+            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.1)
         end
     end)
     
     tabButton.MouseLeave:Connect(function()
         if self.CurrentTab ~= config.text then
-            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.12)
+            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.1)
         end
     end)
     
     local tabObj = {
         Button = tabButton,
         Content = contentFrame,
-        Icon = icon,
-        Label = label,
-        Elements = {}
+        LeftColumn = leftColumn,
+        RightColumn = rightColumn
     }
     
     table.insert(self.Tabs, tabObj)
     
     if #self.Tabs == 1 then
         tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
-        icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         contentFrame.Visible = true
         self.CurrentTab = config.text
     end
     
-    local tabFunctions = {Theme = self.Theme}
+    local tabFunctions = {Theme = self.Theme, LeftColumn = leftColumn, RightColumn = rightColumn}
     
-    function tabFunctions:AddGroupbox(config)
+    function tabFunctions:AddLeftGroupbox(config)
+        return self:CreateGroupbox(config, self.LeftColumn)
+    end
+    
+    function tabFunctions:AddRightGroupbox(config)
+        return self:CreateGroupbox(config, self.RightColumn)
+    end
+    
+    function tabFunctions:CreateGroupbox(config, parent)
         local groupbox = Instance.new("Frame")
         groupbox.Name = config.text
-        groupbox.Size = UDim2.new(1, 0, 0, 45)
+        groupbox.Size = UDim2.new(1, 0, 0, 40)
         groupbox.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
         groupbox.BorderSizePixel = 0
-        groupbox.Parent = contentFrame
-        CreateCorner(groupbox, 6)
+        groupbox.Parent = parent
+        CreateCorner(groupbox, 5)
         CreateStroke(groupbox, IcarusCore.Themes[self.Theme].Border, 1)
         
-        local groupboxIcon = Instance.new("ImageLabel")
-        groupboxIcon.Size = UDim2.new(0, 16, 0, 16)
-        groupboxIcon.Position = UDim2.new(0, 8, 0, 8)
-        groupboxIcon.BackgroundTransparency = 1
-        groupboxIcon.Image = config.icon or "rbxassetid://7734053426"
-        groupboxIcon.ImageColor3 = IcarusCore.Themes[self.Theme].Accent
-        groupboxIcon.Parent = groupbox
-        
         local groupboxLabel = Instance.new("TextLabel")
-        groupboxLabel.Size = UDim2.new(1, -35, 0, 24)
-        groupboxLabel.Position = UDim2.new(0, 28, 0, 6)
+        groupboxLabel.Size = UDim2.new(1, -16, 0, 22)
+        groupboxLabel.Position = UDim2.new(0, 8, 0, 6)
         groupboxLabel.BackgroundTransparency = 1
         groupboxLabel.Text = config.text
         groupboxLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
         groupboxLabel.Font = Enum.Font.GothamBold
-        groupboxLabel.TextSize = 12
+        groupboxLabel.TextSize = 11
         groupboxLabel.TextXAlignment = Enum.TextXAlignment.Left
         groupboxLabel.Parent = groupbox
         
         local groupboxContent = Instance.new("Frame")
         groupboxContent.Name = "Content"
-        groupboxContent.Size = UDim2.new(1, -16, 1, -34)
-        groupboxContent.Position = UDim2.new(0, 8, 0, 32)
+        groupboxContent.Size = UDim2.new(1, -12, 1, -32)
+        groupboxContent.Position = UDim2.new(0, 6, 0, 30)
         groupboxContent.BackgroundTransparency = 1
         groupboxContent.Parent = groupbox
         
         local groupboxList = Instance.new("UIListLayout")
-        groupboxList.Padding = UDim.new(0, 5)
+        groupboxList.Padding = UDim.new(0, 4)
         groupboxList.SortOrder = Enum.SortOrder.LayoutOrder
         groupboxList.Parent = groupboxContent
         
         groupboxList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            groupbox.Size = UDim2.new(1, 0, 0, groupboxList.AbsoluteContentSize.Y + 45)
+            groupbox.Size = UDim2.new(1, 0, 0, groupboxList.AbsoluteContentSize.Y + 40)
         end)
         
-        return {
+        local groupboxFunctions = {
             Groupbox = groupbox,
             Content = groupboxContent,
             Theme = self.Theme
         }
+        
+        function groupboxFunctions:AddTabbox(config)
+            local tabboxFrame = Instance.new("Frame")
+            tabboxFrame.Name = "Tabbox"
+            tabboxFrame.Size = UDim2.new(1, 0, 0, 26)
+            tabboxFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            tabboxFrame.BorderSizePixel = 0
+            tabboxFrame.Parent = groupboxContent
+            CreateCorner(tabboxFrame, 4)
+            
+            local tabboxButtons = Instance.new("Frame")
+            tabboxButtons.Name = "Buttons"
+            tabboxButtons.Size = UDim2.new(1, -4, 0, 22)
+            tabboxButtons.Position = UDim2.new(0, 2, 0, 2)
+            tabboxButtons.BackgroundTransparency = 1
+            tabboxButtons.Parent = tabboxFrame
+            
+            local buttonList = Instance.new("UIListLayout")
+            buttonList.FillDirection = Enum.FillDirection.Horizontal
+            buttonList.Padding = UDim.new(0, 2)
+            buttonList.SortOrder = Enum.SortOrder.LayoutOrder
+            buttonList.Parent = tabboxButtons
+            
+            local tabboxContent = Instance.new("Frame")
+            tabboxContent.Name = "TabboxContent"
+            tabboxContent.Size = UDim2.new(1, 0, 0, 0)
+            tabboxContent.Position = UDim2.new(0, 0, 0, 30)
+            tabboxContent.BackgroundTransparency = 1
+            tabboxContent.Parent = groupboxContent
+            
+            local tabboxTabs = {}
+            local currentTabboxTab = nil
+            
+            local tabboxFunctions = {
+                Frame = tabboxFrame,
+                Content = tabboxContent,
+                Tabs = tabboxTabs,
+                Theme = self.Theme
+            }
+            
+            function tabboxFunctions:AddTab(tabConfig)
+                local tabButton = Instance.new("TextButton")
+                tabButton.Name = tabConfig.text
+                tabButton.Size = UDim2.new(0, 0, 1, 0)
+                tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+                tabButton.BorderSizePixel = 0
+                tabButton.Text = tabConfig.text
+                tabButton.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+                tabButton.Font = Enum.Font.GothamSemibold
+                tabButton.TextSize = 10
+                tabButton.AutoButtonColor = false
+                tabButton.Parent = tabboxButtons
+                CreateCorner(tabButton, 3)
+                
+                local textSize = game:GetService("TextService"):GetTextSize(
+                    tabConfig.text,
+                    10,
+                    Enum.Font.GothamSemibold,
+                    Vector2.new(1000, 1000)
+                )
+                tabButton.Size = UDim2.new(0, textSize.X + 16, 1, 0)
+                
+                local tabContent = Instance.new("Frame")
+                tabContent.Name = tabConfig.text
+                tabContent.Size = UDim2.new(1, 0, 0, 0)
+                tabContent.BackgroundTransparency = 1
+                tabContent.Visible = false
+                tabContent.Parent = tabboxContent
+                
+                local tabContentList = Instance.new("UIListLayout")
+                tabContentList.Padding = UDim.new(0, 4)
+                tabContentList.SortOrder = Enum.SortOrder.LayoutOrder
+                tabContentList.Parent = tabContent
+                
+                tabContentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    tabContent.Size = UDim2.new(1, 0, 0, tabContentList.AbsoluteContentSize.Y)
+                    
+                    local totalHeight = 30
+                    for _, tab in pairs(tabboxTabs) do
+                        if tab.Content.Visible then
+                            totalHeight = totalHeight + tab.Content.AbsoluteSize.Y
+                        end
+                    end
+                    tabboxContent.Size = UDim2.new(1, 0, 0, totalHeight - 30)
+                end)
+                
+                tabButton.MouseButton1Click:Connect(function()
+                    for _, tab in pairs(tabboxTabs) do
+                        TweenObject(tab.Button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.1)
+                        TweenObject(tab.Button, {TextColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.1)
+                        tab.Content.Visible = false
+                    end
+                    TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.1)
+                    TweenObject(tabButton, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.1)
+                    tabContent.Visible = true
+                    currentTabboxTab = tabConfig.text
+                end)
+                
+                local tabFuncs = {
+                    Button = tabButton,
+                    Content = tabContent,
+                    Theme = self.Theme
+                }
+                
+                table.insert(tabboxTabs, tabFuncs)
+                
+                if #tabboxTabs == 1 then
+                    tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
+                    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    tabContent.Visible = true
+                    currentTabboxTab = tabConfig.text
+                end
+                
+                function tabFuncs:AddToggle(cfg)
+                    return CreateElement("Toggle", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddButton(cfg)
+                    return CreateElement("Button", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddSlider(cfg)
+                    return CreateElement("Slider", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddDropdown(cfg)
+                    return CreateElement("Dropdown", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddTextbox(cfg)
+                    return CreateElement("Textbox", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddColorpicker(cfg)
+                    return CreateElement("Colorpicker", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddKeybind(cfg)
+                    return CreateElement("Keybind", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddLabel(cfg)
+                    return CreateElement("Label", cfg, tabContent, self.Theme)
+                end
+                
+                function tabFuncs:AddDivider(text)
+                    return CreateElement("Divider", {text = text}, tabContent, self.Theme)
+                end
+                
+                return tabFuncs
+            end
+            
+            return tabboxFunctions
+        end
+        
+        function groupboxFunctions:AddToggle(cfg)
+            return CreateElement("Toggle", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddButton(cfg)
+            return CreateElement("Button", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddSlider(cfg)
+            return CreateElement("Slider", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddDropdown(cfg)
+            return CreateElement("Dropdown", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddTextbox(cfg)
+            return CreateElement("Textbox", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddColorpicker(cfg)
+            return CreateElement("Colorpicker", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddKeybind(cfg)
+            return CreateElement("Keybind", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddLabel(cfg)
+            return CreateElement("Label", cfg, groupboxContent, self.Theme)
+        end
+        
+        function groupboxFunctions:AddDivider(text)
+            return CreateElement("Divider", {text = text}, groupboxContent, self.Theme)
+        end
+        
+        return groupboxFunctions
     end
     
-    function tabFunctions:AddLabel(config)
-        local label = Instance.new("TextLabel")
-        label.Name = "Label"
-        label.Size = UDim2.new(1, 0, 0, 18)
-        label.BackgroundTransparency = 1
-        label.Text = config.text
-        label.TextColor3 = IcarusCore.Themes[self.Theme].Text
-        label.Font = Enum.Font.Gotham
-        label.TextSize = 11
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.Parent = contentFrame
-        
-        return {
-            Label = label,
-            UpdateText = function(newText)
-                label.Text = newText
-            end
-        }
-    end
-    
-    function tabFunctions:AddButton(config)
-        local button = Instance.new("TextButton")
-        button.Name = "Button"
-        button.Size = UDim2.new(1, 0, 0, 32)
-        button.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
-        button.BorderSizePixel = 0
-        button.Text = config.text
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.Font = Enum.Font.GothamBold
-        button.TextSize = 12
-        button.AutoButtonColor = false
-        button.Parent = contentFrame
-        CreateCorner(button, 5)
-        
-        button.MouseButton1Click:Connect(function()
-            if config.callback then
-                config.callback()
-            end
-        end)
-        
-        button.MouseEnter:Connect(function()
-            TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].AccentHover}, 0.12)
-        end)
-        
-        button.MouseLeave:Connect(function()
-            TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.12)
-        end)
-        
-        return {
-            Button = button,
-            UpdateText = function(newText)
-                button.Text = newText
-            end
-        }
-    end
-    
-    function tabFunctions:AddParagraph(config)
-        local paragraph = Instance.new("Frame")
-        paragraph.Name = "Paragraph"
-        paragraph.Size = UDim2.new(1, 0, 0, 55)
-        paragraph.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
-        paragraph.BorderSizePixel = 0
-        paragraph.Parent = contentFrame
-        CreateCorner(paragraph, 5)
-        CreateStroke(paragraph, IcarusCore.Themes[self.Theme].Border, 1)
-        
-        local title = Instance.new("TextLabel")
-        title.Size = UDim2.new(1, -16, 0, 18)
-        title.Position = UDim2.new(0, 8, 0, 6)
-        title.BackgroundTransparency = 1
-        title.Text = config.text
-        title.TextColor3 = IcarusCore.Themes[self.Theme].Text
-        title.Font = Enum.Font.GothamBold
-        title.TextSize = 12
-        title.TextXAlignment = Enum.TextXAlignment.Left
-        title.Parent = paragraph
-        
-        local desc = Instance.new("TextLabel")
-        desc.Size = UDim2.new(1, -16, 0, 28)
-        desc.Position = UDim2.new(0, 8, 0, 24)
-        desc.BackgroundTransparency = 1
-        desc.Text = config.description or ""
-        desc.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
-        desc.Font = Enum.Font.Gotham
-        desc.TextSize = 10
-        desc.TextXAlignment = Enum.TextXAlignment.Left
-        desc.TextYAlignment = Enum.TextYAlignment.Top
-        desc.TextWrapped = true
-        desc.Parent = paragraph
-        
-        return {
-            Paragraph = paragraph,
-            UpdateTitle = function(newTitle)
-                title.Text = newTitle
-            end,
-            UpdateDescription = function(newDesc)
-                desc.Text = newDesc
-            end
-        }
-    end
-    
-    function tabFunctions:AddToggle(config)
+    return tabFunctions
+end
+
+function CreateElement(elementType, config, parent, theme)
+    if elementType == "Toggle" then
         local toggleFrame = Instance.new("Frame")
         toggleFrame.Name = "Toggle"
-        toggleFrame.Size = UDim2.new(1, 0, 0, 32)
-        toggleFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        toggleFrame.Size = UDim2.new(1, 0, 0, 28)
+        toggleFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         toggleFrame.BorderSizePixel = 0
-        toggleFrame.Parent = contentFrame
-        CreateCorner(toggleFrame, 5)
-        CreateStroke(toggleFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        toggleFrame.Parent = parent
+        CreateCorner(toggleFrame, 4)
         
         local toggleLabel = Instance.new("TextLabel")
-        toggleLabel.Size = UDim2.new(1, -55, 1, 0)
-        toggleLabel.Position = UDim2.new(0, 8, 0, 0)
+        toggleLabel.Size = UDim2.new(1, -50, 1, 0)
+        toggleLabel.Position = UDim2.new(0, 7, 0, 0)
         toggleLabel.BackgroundTransparency = 1
         toggleLabel.Text = config.text
-        toggleLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        toggleLabel.TextColor3 = IcarusCore.Themes[theme].Text
         toggleLabel.Font = Enum.Font.Gotham
-        toggleLabel.TextSize = 11
+        toggleLabel.TextSize = 10
         toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
         toggleLabel.Parent = toggleFrame
         
         local toggleButton = Instance.new("TextButton")
-        toggleButton.Size = UDim2.new(0, 40, 0, 20)
-        toggleButton.Position = UDim2.new(1, -48, 0.5, -10)
-        toggleButton.BackgroundColor3 = config.type and IcarusCore.Themes[self.Theme].Accent or IcarusCore.Themes[self.Theme].Tertiary
+        toggleButton.Size = UDim2.new(0, 36, 0, 18)
+        toggleButton.Position = UDim2.new(1, -43, 0.5, -9)
+        toggleButton.BackgroundColor3 = config.type and IcarusCore.Themes[theme].Accent or IcarusCore.Themes[theme].Border
         toggleButton.BorderSizePixel = 0
         toggleButton.Text = ""
         toggleButton.AutoButtonColor = false
@@ -1066,153 +1067,139 @@ function IcarusLibrary:AddTab(config)
         CreateCorner(toggleButton, 999)
         
         local toggleCircle = Instance.new("Frame")
-        toggleCircle.Size = UDim2.new(0, 16, 0, 16)
-        toggleCircle.Position = config.type and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+        toggleCircle.Size = UDim2.new(0, 14, 0, 14)
+        toggleCircle.Position = config.type and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         toggleCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         toggleCircle.BorderSizePixel = 0
         toggleCircle.Parent = toggleButton
         CreateCorner(toggleCircle, 999)
         
         local toggled = config.type or false
-        
-        if config.flag then
-            IcarusCore.Flags[config.flag] = toggled
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = toggled end
         
         toggleButton.MouseButton1Click:Connect(function()
             toggled = not toggled
-            
-            if config.flag then
-                IcarusCore.Flags[config.flag] = toggled
-            end
+            if config.flag then IcarusCore.Flags[config.flag] = toggled end
             
             TweenObject(toggleButton, {
-                BackgroundColor3 = toggled and IcarusCore.Themes[self.Theme].Accent or IcarusCore.Themes[self.Theme].Tertiary
-            }, 0.15)
+                BackgroundColor3 = toggled and IcarusCore.Themes[theme].Accent or IcarusCore.Themes[theme].Border
+            }, 0.12)
             TweenObject(toggleCircle, {
-                Position = toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-            }, 0.15, Enum.EasingStyle.Quad)
+                Position = toggled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+            }, 0.12)
             
-            if config.callback then
-                config.callback(toggled)
-            end
+            if config.callback then config.callback(toggled) end
         end)
         
-        return {
-            Frame = toggleFrame,
-            SetValue = function(value)
-                toggled = value
-                
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = value
-                end
-                
-                TweenObject(toggleButton, {
-                    BackgroundColor3 = value and IcarusCore.Themes[self.Theme].Accent or IcarusCore.Themes[self.Theme].Tertiary
-                }, 0.15)
-                TweenObject(toggleCircle, {
-                    Position = value and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-                }, 0.15)
-            end,
-            GetValue = function()
-                return toggled
-            end
-        }
-    end
-    
-    function tabFunctions:AddSlider(config)
+        return {Frame = toggleFrame, SetValue = function(v) toggled = v end}
+        
+    elseif elementType == "Button" then
+        local button = Instance.new("TextButton")
+        button.Name = "Button"
+        button.Size = UDim2.new(1, 0, 0, 28)
+        button.BackgroundColor3 = IcarusCore.Themes[theme].Accent
+        button.BorderSizePixel = 0
+        button.Text = config.text
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Font = Enum.Font.GothamBold
+        button.TextSize = 10
+        button.AutoButtonColor = false
+        button.Parent = parent
+        CreateCorner(button, 4)
+        
+        button.MouseButton1Click:Connect(function()
+            if config.callback then config.callback() end
+        end)
+        
+        button.MouseEnter:Connect(function()
+            TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[theme].AccentHover}, 0.1)
+        end)
+        
+        button.MouseLeave:Connect(function()
+            TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[theme].Accent}, 0.1)
+        end)
+        
+        return {Button = button}
+        
+    elseif elementType == "Slider" then
         local sliderFrame = Instance.new("Frame")
         sliderFrame.Name = "Slider"
-        sliderFrame.Size = UDim2.new(1, 0, 0, 45)
-        sliderFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        sliderFrame.Size = UDim2.new(1, 0, 0, 40)
+        sliderFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         sliderFrame.BorderSizePixel = 0
-        sliderFrame.Parent = contentFrame
-        CreateCorner(sliderFrame, 5)
-        CreateStroke(sliderFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        sliderFrame.Parent = parent
+        CreateCorner(sliderFrame, 4)
         
         local sliderLabel = Instance.new("TextLabel")
-        sliderLabel.Size = UDim2.new(1, -55, 0, 18)
-        sliderLabel.Position = UDim2.new(0, 8, 0, 4)
+        sliderLabel.Size = UDim2.new(1, -50, 0, 16)
+        sliderLabel.Position = UDim2.new(0, 7, 0, 4)
         sliderLabel.BackgroundTransparency = 1
         sliderLabel.Text = config.text
-        sliderLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        sliderLabel.TextColor3 = IcarusCore.Themes[theme].Text
         sliderLabel.Font = Enum.Font.Gotham
-        sliderLabel.TextSize = 11
+        sliderLabel.TextSize = 10
         sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
         sliderLabel.Parent = sliderFrame
         
         local valueLabel = Instance.new("TextLabel")
-        valueLabel.Size = UDim2.new(0, 45, 0, 18)
-        valueLabel.Position = UDim2.new(1, -53, 0, 4)
+        valueLabel.Size = UDim2.new(0, 40, 0, 16)
+        valueLabel.Position = UDim2.new(1, -47, 0, 4)
         valueLabel.BackgroundTransparency = 1
         valueLabel.Text = tostring(config.default or config.min)
-        valueLabel.TextColor3 = IcarusCore.Themes[self.Theme].Accent
+        valueLabel.TextColor3 = IcarusCore.Themes[theme].Accent
         valueLabel.Font = Enum.Font.GothamBold
-        valueLabel.TextSize = 11
+        valueLabel.TextSize = 10
         valueLabel.TextXAlignment = Enum.TextXAlignment.Right
         valueLabel.Parent = sliderFrame
         
         local sliderTrack = Instance.new("Frame")
-        sliderTrack.Size = UDim2.new(1, -16, 0, 5)
-        sliderTrack.Position = UDim2.new(0, 8, 1, -13)
-        sliderTrack.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+        sliderTrack.Size = UDim2.new(1, -14, 0, 4)
+        sliderTrack.Position = UDim2.new(0, 7, 1, -11)
+        sliderTrack.BackgroundColor3 = IcarusCore.Themes[theme].Border
         sliderTrack.BorderSizePixel = 0
         sliderTrack.Parent = sliderFrame
         CreateCorner(sliderTrack, 999)
         
         local sliderFill = Instance.new("Frame")
         sliderFill.Size = UDim2.new(0, 0, 1, 0)
-        sliderFill.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
+        sliderFill.BackgroundColor3 = IcarusCore.Themes[theme].Accent
         sliderFill.BorderSizePixel = 0
         sliderFill.Parent = sliderTrack
         CreateCorner(sliderFill, 999)
         
         local sliderDot = Instance.new("Frame")
-        sliderDot.Size = UDim2.new(0, 12, 0, 12)
-        sliderDot.Position = UDim2.new(1, -6, 0.5, -6)
+        sliderDot.Size = UDim2.new(0, 10, 0, 10)
+        sliderDot.Position = UDim2.new(1, -5, 0.5, -5)
         sliderDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         sliderDot.BorderSizePixel = 0
         sliderDot.Parent = sliderFill
         CreateCorner(sliderDot, 999)
         
         local sliderInput = Instance.new("TextButton")
-        sliderInput.Size = UDim2.new(1, 0, 1, 6)
-        sliderInput.Position = UDim2.new(0, 0, 0, -3)
+        sliderInput.Size = UDim2.new(1, 0, 1, 4)
+        sliderInput.Position = UDim2.new(0, 0, 0, -2)
         sliderInput.BackgroundTransparency = 1
         sliderInput.Text = ""
         sliderInput.Parent = sliderTrack
         
         local dragging = false
         local currentValue = config.default or config.min
-        
-        if config.flag then
-            IcarusCore.Flags[config.flag] = currentValue
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = currentValue end
         
         local function updateSlider(input)
             local relativeX = math.clamp((input.Position.X - sliderTrack.AbsolutePosition.X) / sliderTrack.AbsoluteSize.X, 0, 1)
             currentValue = math.floor(config.min + (config.max - config.min) * relativeX)
             valueLabel.Text = tostring(currentValue)
             sliderFill.Size = UDim2.new(relativeX, 0, 1, 0)
-            
-            if config.flag then
-                IcarusCore.Flags[config.flag] = currentValue
-            end
-            
-            if config.callback then
-                config.callback(currentValue)
-            end
+            if config.flag then IcarusCore.Flags[config.flag] = currentValue end
+            if config.callback then config.callback(currentValue) end
         end
         
-        sliderInput.MouseButton1Down:Connect(function()
-            dragging = true
-            TweenObject(sliderDot, {Size = UDim2.new(0, 14, 0, 14), Position = UDim2.new(1, -7, 0.5, -7)}, 0.08)
-        end)
+        sliderInput.MouseButton1Down:Connect(function() dragging = true end)
         
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = false
-                TweenObject(sliderDot, {Size = UDim2.new(0, 12, 0, 12), Position = UDim2.new(1, -6, 0.5, -6)}, 0.12)
             end
         end)
         
@@ -1227,61 +1214,44 @@ function IcarusLibrary:AddTab(config)
         local defaultRatio = (config.default - config.min) / (config.max - config.min)
         sliderFill.Size = UDim2.new(defaultRatio, 0, 1, 0)
         
-        return {
-            Frame = sliderFrame,
-            SetValue = function(value)
-                currentValue = math.clamp(value, config.min, config.max)
-                valueLabel.Text = tostring(currentValue)
-                local ratio = (currentValue - config.min) / (config.max - config.min)
-                sliderFill.Size = UDim2.new(ratio, 0, 1, 0)
-                
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = currentValue
-                end
-            end,
-            GetValue = function()
-                return currentValue
-            end
-        }
-    end
-    
-    function tabFunctions:AddDropdown(config)
+        return {Frame = sliderFrame, SetValue = function(v) currentValue = v end}
+        
+    elseif elementType == "Dropdown" then
         local dropdownFrame = Instance.new("Frame")
         dropdownFrame.Name = "Dropdown"
-        dropdownFrame.Size = UDim2.new(1, 0, 0, 32)
-        dropdownFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        dropdownFrame.Size = UDim2.new(1, 0, 0, 28)
+        dropdownFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         dropdownFrame.BorderSizePixel = 0
         dropdownFrame.ClipsDescendants = false
         dropdownFrame.ZIndex = 5
-        dropdownFrame.Parent = contentFrame
-        CreateCorner(dropdownFrame, 5)
-        CreateStroke(dropdownFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        dropdownFrame.Parent = parent
+        CreateCorner(dropdownFrame, 4)
         
         local dropdownButton = Instance.new("TextButton")
-        dropdownButton.Size = UDim2.new(1, 0, 0, 32)
+        dropdownButton.Size = UDim2.new(1, 0, 0, 28)
         dropdownButton.BackgroundTransparency = 1
         dropdownButton.Text = ""
         dropdownButton.ZIndex = 6
         dropdownButton.Parent = dropdownFrame
         
         local dropdownLabel = Instance.new("TextLabel")
-        dropdownLabel.Size = UDim2.new(1, -35, 0, 32)
-        dropdownLabel.Position = UDim2.new(0, 8, 0, 0)
+        dropdownLabel.Size = UDim2.new(1, -30, 0, 28)
+        dropdownLabel.Position = UDim2.new(0, 7, 0, 0)
         dropdownLabel.BackgroundTransparency = 1
         dropdownLabel.Text = config.text
-        dropdownLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        dropdownLabel.TextColor3 = IcarusCore.Themes[theme].Text
         dropdownLabel.Font = Enum.Font.Gotham
-        dropdownLabel.TextSize = 11
+        dropdownLabel.TextSize = 10
         dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
         dropdownLabel.ZIndex = 6
         dropdownLabel.Parent = dropdownFrame
         
         local dropdownIcon = Instance.new("ImageLabel")
-        dropdownIcon.Size = UDim2.new(0, 14, 0, 14)
-        dropdownIcon.Position = UDim2.new(1, -22, 0, 9)
+        dropdownIcon.Size = UDim2.new(0, 12, 0, 12)
+        dropdownIcon.Position = UDim2.new(1, -19, 0, 8)
         dropdownIcon.BackgroundTransparency = 1
         dropdownIcon.Image = "rbxassetid://7733717447"
-        dropdownIcon.ImageColor3 = IcarusCore.Themes[self.Theme].TextDim
+        dropdownIcon.ImageColor3 = IcarusCore.Themes[theme].TextDim
         dropdownIcon.Rotation = 0
         dropdownIcon.ZIndex = 6
         dropdownIcon.Parent = dropdownFrame
@@ -1289,446 +1259,201 @@ function IcarusLibrary:AddTab(config)
         local dropdownContainer = Instance.new("ScrollingFrame")
         dropdownContainer.Name = "DropdownContainer"
         dropdownContainer.Size = UDim2.new(1, 0, 0, 0)
-        dropdownContainer.Position = UDim2.new(0, 0, 0, 36)
-        dropdownContainer.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+        dropdownContainer.Position = UDim2.new(0, 0, 0, 32)
+        dropdownContainer.BackgroundColor3 = IcarusCore.Themes[theme].Secondary
         dropdownContainer.BorderSizePixel = 0
         dropdownContainer.ClipsDescendants = true
         dropdownContainer.ScrollBarThickness = 2
-        dropdownContainer.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
+        dropdownContainer.ScrollBarImageColor3 = IcarusCore.Themes[theme].Accent
         dropdownContainer.ZIndex = 50
         dropdownContainer.Parent = dropdownFrame
-        CreateCorner(dropdownContainer, 5)
-        CreateStroke(dropdownContainer, IcarusCore.Themes[self.Theme].Accent, 1)
+        CreateCorner(dropdownContainer, 4)
+        CreateStroke(dropdownContainer, IcarusCore.Themes[theme].Accent, 1)
         
         local dropdownList = Instance.new("UIListLayout")
         dropdownList.Padding = UDim.new(0, 2)
         dropdownList.Parent = dropdownContainer
         
         local dropdownPadding = Instance.new("UIPadding")
-        dropdownPadding.PaddingTop = UDim.new(0, 4)
-        dropdownPadding.PaddingBottom = UDim.new(0, 4)
-        dropdownPadding.PaddingLeft = UDim.new(0, 4)
-        dropdownPadding.PaddingRight = UDim.new(0, 4)
+        dropdownPadding.PaddingTop = UDim.new(0, 3)
+        dropdownPadding.PaddingBottom = UDim.new(0, 3)
+        dropdownPadding.PaddingLeft = UDim.new(0, 3)
+        dropdownPadding.PaddingRight = UDim.new(0, 3)
         dropdownPadding.Parent = dropdownContainer
         
         local opened = false
         local selectedValues = {}
-        
-        if config.flag then
-            IcarusCore.Flags[config.flag] = config.multi and {} or nil
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = config.multi and {} or nil end
         
         dropdownButton.MouseButton1Click:Connect(function()
             opened = not opened
-            TweenObject(dropdownIcon, {Rotation = opened and 180 or 0}, 0.15)
+            TweenObject(dropdownIcon, {Rotation = opened and 180 or 0}, 0.12)
             
-            local targetHeight = opened and math.min(#config.options * 26 + 8, 150) or 0
-            TweenObject(dropdownContainer, {Size = UDim2.new(1, 0, 0, targetHeight)}, 0.2, Enum.EasingStyle.Quad)
-            dropdownContainer.CanvasSize = UDim2.new(0, 0, 0, #config.options * 26 + 8)
+            local targetHeight = opened and math.min(#config.options * 24 + 6, 120) or 0
+            TweenObject(dropdownContainer, {Size = UDim2.new(1, 0, 0, targetHeight)}, 0.15)
+            dropdownContainer.CanvasSize = UDim2.new(0, 0, 0, #config.options * 24 + 6)
         end)
         
         for _, option in ipairs(config.options) do
             local optionButton = Instance.new("TextButton")
-            optionButton.Size = UDim2.new(1, 0, 0, 24)
-            optionButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+            optionButton.Size = UDim2.new(1, 0, 0, 22)
+            optionButton.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
             optionButton.BorderSizePixel = 0
             optionButton.Text = option
-            optionButton.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            optionButton.TextColor3 = IcarusCore.Themes[theme].Text
             optionButton.Font = Enum.Font.Gotham
-            optionButton.TextSize = 10
+            optionButton.TextSize = 9
             optionButton.AutoButtonColor = false
             optionButton.ZIndex = 51
             optionButton.Parent = dropdownContainer
-            CreateCorner(optionButton, 4)
+            CreateCorner(optionButton, 3)
             
             optionButton.MouseButton1Click:Connect(function()
                 if config.multi then
-                    local index = table.find(selectedValues, option)
-                    if index then
-                        table.remove(selectedValues, index)
-                        TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.12)
+                    local idx = table.find(selectedValues, option)
+                    if idx then
+                        table.remove(selectedValues, idx)
+                        TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[theme].Tertiary}, 0.1)
                     else
                         table.insert(selectedValues, option)
-                        TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.12)
+                        TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[theme].Accent}, 0.1)
                     end
-                    
-                    if config.flag then
-                        IcarusCore.Flags[config.flag] = selectedValues
-                    end
+                    if config.flag then IcarusCore.Flags[config.flag] = selectedValues end
                 else
                     selectedValues = {option}
                     for _, btn in pairs(dropdownContainer:GetChildren()) do
                         if btn:IsA("TextButton") then
-                            TweenObject(btn, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.12)
+                            TweenObject(btn, {BackgroundColor3 = IcarusCore.Themes[theme].Tertiary}, 0.1)
                         end
                     end
-                    TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.12)
-                    
-                    if config.flag then
-                        IcarusCore.Flags[config.flag] = option
-                    end
+                    TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[theme].Accent}, 0.1)
+                    if config.flag then IcarusCore.Flags[config.flag] = option end
                 end
                 
                 if config.callback then
                     config.callback(config.multi and selectedValues or selectedValues[1])
                 end
             end)
-            
-            optionButton.MouseEnter:Connect(function()
-                if not table.find(selectedValues, option) then
-                    TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.12)
-                end
-            end)
-            
-            optionButton.MouseLeave:Connect(function()
-                if not table.find(selectedValues, option) then
-                    TweenObject(optionButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.12)
-                end
-            end)
         end
         
-        return {
-            Frame = dropdownFrame,
-            SetValue = function(value)
-                if config.multi and type(value) == "table" then
-                    selectedValues = value
-                    for _, btn in pairs(dropdownContainer:GetChildren()) do
-                        if btn:IsA("TextButton") then
-                            if table.find(value, btn.Text) then
-                                btn.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
-                            else
-                                btn.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
-                            end
-                        end
-                    end
-                elseif not config.multi then
-                    selectedValues = {value}
-                    for _, btn in pairs(dropdownContainer:GetChildren()) do
-                        if btn:IsA("TextButton") then
-                            btn.BackgroundColor3 = btn.Text == value and IcarusCore.Themes[self.Theme].Accent or IcarusCore.Themes[self.Theme].Secondary
-                        end
-                    end
-                end
-                
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = config.multi and selectedValues or value
-                end
-            end,
-            GetValue = function()
-                return config.multi and selectedValues or selectedValues[1]
-            end
-        }
-    end
-    
-    function tabFunctions:AddTextbox(config)
+        return {Frame = dropdownFrame}
+        
+    elseif elementType == "Textbox" then
         local textboxFrame = Instance.new("Frame")
         textboxFrame.Name = "Textbox"
-        textboxFrame.Size = UDim2.new(1, 0, 0, 32)
-        textboxFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        textboxFrame.Size = UDim2.new(1, 0, 0, 28)
+        textboxFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         textboxFrame.BorderSizePixel = 0
-        textboxFrame.Parent = contentFrame
-        CreateCorner(textboxFrame, 5)
-        CreateStroke(textboxFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        textboxFrame.Parent = parent
+        CreateCorner(textboxFrame, 4)
         
         local textboxLabel = Instance.new("TextLabel")
-        textboxLabel.Size = UDim2.new(0.4, 0, 1, 0)
-        textboxLabel.Position = UDim2.new(0, 8, 0, 0)
+        textboxLabel.Size = UDim2.new(0.35, 0, 1, 0)
+        textboxLabel.Position = UDim2.new(0, 7, 0, 0)
         textboxLabel.BackgroundTransparency = 1
         textboxLabel.Text = config.text
-        textboxLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        textboxLabel.TextColor3 = IcarusCore.Themes[theme].Text
         textboxLabel.Font = Enum.Font.Gotham
-        textboxLabel.TextSize = 11
+        textboxLabel.TextSize = 10
         textboxLabel.TextXAlignment = Enum.TextXAlignment.Left
         textboxLabel.Parent = textboxFrame
         
         local textbox = Instance.new("TextBox")
-        textbox.Size = UDim2.new(0.55, 0, 0, 24)
-        textbox.Position = UDim2.new(0.42, 0, 0.5, -12)
-        textbox.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+        textbox.Size = UDim2.new(0.6, 0, 0, 20)
+        textbox.Position = UDim2.new(0.37, 0, 0.5, -10)
+        textbox.BackgroundColor3 = IcarusCore.Themes[theme].Secondary
         textbox.BorderSizePixel = 0
         textbox.Text = config.default or ""
-        textbox.PlaceholderText = config.placeholder or "Enter text..."
-        textbox.TextColor3 = IcarusCore.Themes[self.Theme].Text
-        textbox.PlaceholderColor3 = IcarusCore.Themes[self.Theme].TextDim
+        textbox.PlaceholderText = config.placeholder or "..."
+        textbox.TextColor3 = IcarusCore.Themes[theme].Text
+        textbox.PlaceholderColor3 = IcarusCore.Themes[theme].TextDim
         textbox.Font = Enum.Font.Gotham
-        textbox.TextSize = 10
+        textbox.TextSize = 9
         textbox.Parent = textboxFrame
-        CreateCorner(textbox, 4)
+        CreateCorner(textbox, 3)
         
-        if config.flag then
-            IcarusCore.Flags[config.flag] = textbox.Text
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = textbox.Text end
         
         textbox.FocusLost:Connect(function()
-            if config.flag then
-                IcarusCore.Flags[config.flag] = textbox.Text
-            end
-            
-            if config.callback then
-                config.callback(textbox.Text)
-            end
+            if config.flag then IcarusCore.Flags[config.flag] = textbox.Text end
+            if config.callback then config.callback(textbox.Text) end
         end)
         
-        return {
-            Frame = textboxFrame,
-            SetValue = function(value)
-                textbox.Text = value
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = value
-                end
-            end,
-            GetValue = function()
-                return textbox.Text
-            end
-        }
-    end
-    
-    function tabFunctions:AddColorpicker(config)
+        return {Frame = textboxFrame, SetValue = function(v) textbox.Text = v end}
+        
+    elseif elementType == "Colorpicker" then
         local colorFrame = Instance.new("Frame")
         colorFrame.Name = "Colorpicker"
-        colorFrame.Size = UDim2.new(1, 0, 0, 32)
-        colorFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        colorFrame.Size = UDim2.new(1, 0, 0, 28)
+        colorFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         colorFrame.BorderSizePixel = 0
-        colorFrame.Parent = contentFrame
-        CreateCorner(colorFrame, 5)
-        CreateStroke(colorFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        colorFrame.Parent = parent
+        CreateCorner(colorFrame, 4)
         
         local colorLabel = Instance.new("TextLabel")
-        colorLabel.Size = UDim2.new(1, -55, 1, 0)
-        colorLabel.Position = UDim2.new(0, 8, 0, 0)
+        colorLabel.Size = UDim2.new(1, -50, 1, 0)
+        colorLabel.Position = UDim2.new(0, 7, 0, 0)
         colorLabel.BackgroundTransparency = 1
         colorLabel.Text = config.text
-        colorLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        colorLabel.TextColor3 = IcarusCore.Themes[theme].Text
         colorLabel.Font = Enum.Font.Gotham
-        colorLabel.TextSize = 11
+        colorLabel.TextSize = 10
         colorLabel.TextXAlignment = Enum.TextXAlignment.Left
         colorLabel.Parent = colorFrame
         
         local currentColor = config.default or Color3.fromRGB(138, 43, 226)
         
         local colorDisplay = Instance.new("TextButton")
-        colorDisplay.Size = UDim2.new(0, 40, 0, 22)
-        colorDisplay.Position = UDim2.new(1, -48, 0.5, -11)
+        colorDisplay.Size = UDim2.new(0, 36, 0, 20)
+        colorDisplay.Position = UDim2.new(1, -43, 0.5, -10)
         colorDisplay.BackgroundColor3 = currentColor
         colorDisplay.BorderSizePixel = 0
         colorDisplay.Text = ""
         colorDisplay.AutoButtonColor = false
         colorDisplay.Parent = colorFrame
-        CreateCorner(colorDisplay, 4)
-        CreateStroke(colorDisplay, IcarusCore.Themes[self.Theme].Border, 1)
+        CreateCorner(colorDisplay, 3)
+        CreateStroke(colorDisplay, IcarusCore.Themes[theme].Border, 1)
         
-        if config.flag then
-            IcarusCore.Flags[config.flag] = currentColor
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = currentColor end
         
-        local pickerOpen = false
+        return {Frame = colorFrame, SetValue = function(c) currentColor = c; colorDisplay.BackgroundColor3 = c end}
         
-        colorDisplay.MouseButton1Click:Connect(function()
-            if not pickerOpen then
-                pickerOpen = true
-                
-                local pickerFrame = Instance.new("Frame")
-                pickerFrame.Name = "ColorPicker"
-                pickerFrame.Size = UDim2.new(0, 200, 0, 180)
-                pickerFrame.Position = UDim2.new(0.5, -100, 0.5, -90)
-                pickerFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
-                pickerFrame.BorderSizePixel = 0
-                pickerFrame.ZIndex = 100
-                pickerFrame.Parent = ScreenGui
-                CreateCorner(pickerFrame, 8)
-                CreateStroke(pickerFrame, IcarusCore.Themes[self.Theme].Border, 1)
-                CreateShadow(pickerFrame)
-                
-                MakeDraggable(pickerFrame)
-                
-                local pickerTitle = Instance.new("TextLabel")
-                pickerTitle.Size = UDim2.new(1, -40, 0, 30)
-                pickerTitle.Position = UDim2.new(0, 10, 0, 5)
-                pickerTitle.BackgroundTransparency = 1
-                pickerTitle.Text = "Color Picker"
-                pickerTitle.TextColor3 = IcarusCore.Themes[self.Theme].Text
-                pickerTitle.Font = Enum.Font.GothamBold
-                pickerTitle.TextSize = 12
-                pickerTitle.TextXAlignment = Enum.TextXAlignment.Left
-                pickerTitle.ZIndex = 101
-                pickerTitle.Parent = pickerFrame
-                
-                local closeButton = Instance.new("TextButton")
-                closeButton.Size = UDim2.new(0, 24, 0, 24)
-                closeButton.Position = UDim2.new(1, -30, 0, 5)
-                closeButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Danger
-                closeButton.BorderSizePixel = 0
-                closeButton.Text = "×"
-                closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                closeButton.Font = Enum.Font.GothamBold
-                closeButton.TextSize = 16
-                closeButton.ZIndex = 101
-                closeButton.Parent = pickerFrame
-                CreateCorner(closeButton, 4)
-                
-                local hueSlider = Instance.new("Frame")
-                hueSlider.Size = UDim2.new(0.9, 0, 0, 20)
-                hueSlider.Position = UDim2.new(0.05, 0, 0, 45)
-                hueSlider.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-                hueSlider.BorderSizePixel = 0
-                hueSlider.ZIndex = 101
-                hueSlider.Parent = pickerFrame
-                CreateCorner(hueSlider, 4)
-                CreateGradient(hueSlider, {
-                    Color3.fromRGB(255, 0, 0),
-                    Color3.fromRGB(255, 255, 0),
-                    Color3.fromRGB(0, 255, 0),
-                    Color3.fromRGB(0, 255, 255),
-                    Color3.fromRGB(0, 0, 255),
-                    Color3.fromRGB(255, 0, 255),
-                    Color3.fromRGB(255, 0, 0)
-                })
-                
-                local satSlider = Instance.new("Frame")
-                satSlider.Size = UDim2.new(0.9, 0, 0, 20)
-                satSlider.Position = UDim2.new(0.05, 0, 0, 75)
-                satSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                satSlider.BorderSizePixel = 0
-                satSlider.ZIndex = 101
-                satSlider.Parent = pickerFrame
-                CreateCorner(satSlider, 4)
-                
-                local valSlider = Instance.new("Frame")
-                valSlider.Size = UDim2.new(0.9, 0, 0, 20)
-                valSlider.Position = UDim2.new(0.05, 0, 0, 105)
-                valSlider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                valSlider.BorderSizePixel = 0
-                valSlider.ZIndex = 101
-                valSlider.Parent = pickerFrame
-                CreateCorner(valSlider, 4)
-                
-                local preview = Instance.new("Frame")
-                preview.Size = UDim2.new(0.9, 0, 0, 30)
-                preview.Position = UDim2.new(0.05, 0, 0, 135)
-                preview.BackgroundColor3 = currentColor
-                preview.BorderSizePixel = 0
-                preview.ZIndex = 101
-                preview.Parent = pickerFrame
-                CreateCorner(preview, 4)
-                CreateStroke(preview, IcarusCore.Themes[self.Theme].Border, 1)
-                
-                local h, s, v = currentColor:ToHSV()
-                
-                local function updateColor()
-                    local newColor = Color3.fromHSV(h, s, v)
-                    preview.BackgroundColor3 = newColor
-                    colorDisplay.BackgroundColor3 = newColor
-                    currentColor = newColor
-                    
-                    if config.flag then
-                        IcarusCore.Flags[config.flag] = newColor
-                    end
-                    
-                    if config.callback then
-                        config.callback(newColor)
-                    end
-                end
-                
-                local function createSliderInput(slider, updateFunc)
-                    local sliderInput = Instance.new("TextButton")
-                    sliderInput.Size = UDim2.new(1, 0, 1, 0)
-                    sliderInput.BackgroundTransparency = 1
-                    sliderInput.Text = ""
-                    sliderInput.ZIndex = 102
-                    sliderInput.Parent = slider
-                    
-                    local dragging = false
-                    
-                    sliderInput.MouseButton1Down:Connect(function()
-                        dragging = true
-                    end)
-                    
-                    UserInputService.InputEnded:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                            dragging = false
-                        end
-                    end)
-                    
-                    UserInputService.InputChanged:Connect(function(input)
-                        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                            local relativeX = math.clamp((input.Position.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0, 1)
-                            updateFunc(relativeX)
-                            updateColor()
-                        end
-                    end)
-                    
-                    sliderInput.MouseButton1Click:Connect(function()
-                        local relativeX = math.clamp((Mouse.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0, 1)
-                        updateFunc(relativeX)
-                        updateColor()
-                    end)
-                end
-                
-                createSliderInput(hueSlider, function(value) h = value end)
-                createSliderInput(satSlider, function(value) s = value end)
-                createSliderInput(valSlider, function(value) v = value end)
-                
-                closeButton.MouseButton1Click:Connect(function()
-                    pickerFrame:Destroy()
-                    pickerOpen = false
-                end)
-            end
-        end)
-        
-        return {
-            Frame = colorFrame,
-            SetValue = function(color)
-                currentColor = color
-                colorDisplay.BackgroundColor3 = color
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = color
-                end
-            end,
-            GetValue = function()
-                return currentColor
-            end
-        }
-    end
-    
-    function tabFunctions:AddKeybind(config)
+    elseif elementType == "Keybind" then
         local keybindFrame = Instance.new("Frame")
         keybindFrame.Name = "Keybind"
-        keybindFrame.Size = UDim2.new(1, 0, 0, 32)
-        keybindFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        keybindFrame.Size = UDim2.new(1, 0, 0, 28)
+        keybindFrame.BackgroundColor3 = IcarusCore.Themes[theme].Tertiary
         keybindFrame.BorderSizePixel = 0
-        keybindFrame.Parent = contentFrame
-        CreateCorner(keybindFrame, 5)
-        CreateStroke(keybindFrame, IcarusCore.Themes[self.Theme].Border, 1)
+        keybindFrame.Parent = parent
+        CreateCorner(keybindFrame, 4)
         
         local keybindLabel = Instance.new("TextLabel")
-        keybindLabel.Size = UDim2.new(1, -70, 1, 0)
-        keybindLabel.Position = UDim2.new(0, 8, 0, 0)
+        keybindLabel.Size = UDim2.new(1, -60, 1, 0)
+        keybindLabel.Position = UDim2.new(0, 7, 0, 0)
         keybindLabel.BackgroundTransparency = 1
         keybindLabel.Text = config.text
-        keybindLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        keybindLabel.TextColor3 = IcarusCore.Themes[theme].Text
         keybindLabel.Font = Enum.Font.Gotham
-        keybindLabel.TextSize = 11
+        keybindLabel.TextSize = 10
         keybindLabel.TextXAlignment = Enum.TextXAlignment.Left
         keybindLabel.Parent = keybindFrame
         
         local currentKey = config.default or Enum.KeyCode.Unknown
         
         local keybindButton = Instance.new("TextButton")
-        keybindButton.Size = UDim2.new(0, 60, 0, 22)
-        keybindButton.Position = UDim2.new(1, -68, 0.5, -11)
-        keybindButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+        keybindButton.Size = UDim2.new(0, 50, 0, 20)
+        keybindButton.Position = UDim2.new(1, -57, 0.5, -10)
+        keybindButton.BackgroundColor3 = IcarusCore.Themes[theme].Secondary
         keybindButton.BorderSizePixel = 0
         keybindButton.Text = currentKey.Name
-        keybindButton.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        keybindButton.TextColor3 = IcarusCore.Themes[theme].Text
         keybindButton.Font = Enum.Font.GothamBold
-        keybindButton.TextSize = 10
+        keybindButton.TextSize = 9
         keybindButton.AutoButtonColor = false
         keybindButton.Parent = keybindFrame
-        CreateCorner(keybindButton, 4)
+        CreateCorner(keybindButton, 3)
         
-        if config.flag then
-            IcarusCore.Flags[config.flag] = currentKey
-        end
+        if config.flag then IcarusCore.Flags[config.flag] = currentKey end
         
         local listening = false
         
@@ -1736,24 +1461,19 @@ function IcarusLibrary:AddTab(config)
             if not listening then
                 listening = true
                 keybindButton.Text = "..."
-                keybindButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
+                keybindButton.BackgroundColor3 = IcarusCore.Themes[theme].Accent
                 
-                local connection
-                connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                    if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+                local conn
+                conn = UserInputService.InputBegan:Connect(function(input, gp)
+                    if not gp and input.UserInputType == Enum.UserInputType.Keyboard then
                         currentKey = input.KeyCode
                         keybindButton.Text = currentKey.Name
-                        keybindButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+                        keybindButton.BackgroundColor3 = IcarusCore.Themes[theme].Secondary
                         listening = false
-                        connection:Disconnect()
+                        conn:Disconnect()
                         
-                        if config.flag then
-                            IcarusCore.Flags[config.flag] = currentKey
-                        end
-                        
-                        if config.callback then
-                            IcarusCore:AddKeybind(currentKey, config.callback)
-                        end
+                        if config.flag then IcarusCore.Flags[config.flag] = currentKey end
+                        if config.callback then IcarusCore:AddKeybind(currentKey, config.callback) end
                     end
                 end)
             end
@@ -1763,98 +1483,65 @@ function IcarusLibrary:AddTab(config)
             IcarusCore:AddKeybind(currentKey, config.callback)
         end
         
-        return {
-            Frame = keybindFrame,
-            SetValue = function(key)
-                currentKey = key
-                keybindButton.Text = key.Name
-                if config.flag then
-                    IcarusCore.Flags[config.flag] = key
-                end
-            end,
-            GetValue = function()
-                return currentKey
-            end
-        }
-    end
-    
-    function tabFunctions:AddDivider(text)
+        return {Frame = keybindFrame}
+        
+    elseif elementType == "Label" then
+        local label = Instance.new("TextLabel")
+        label.Name = "Label"
+        label.Size = UDim2.new(1, 0, 0, 16)
+        label.BackgroundTransparency = 1
+        label.Text = config.text
+        label.TextColor3 = IcarusCore.Themes[theme].Text
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 10
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Parent = parent
+        
+        return {Label = label}
+        
+    elseif elementType == "Divider" then
         local divider = Instance.new("Frame")
         divider.Name = "Divider"
-        divider.Size = UDim2.new(1, 0, 0, text and 22 or 1)
-        divider.BackgroundColor3 = IcarusCore.Themes[self.Theme].Border
-        divider.BackgroundTransparency = text and 1 or 0.5
+        divider.Size = UDim2.new(1, 0, 0, config.text and 18 or 1)
+        divider.BackgroundColor3 = IcarusCore.Themes[theme].Border
+        divider.BackgroundTransparency = config.text and 1 or 0.5
         divider.BorderSizePixel = 0
-        divider.Parent = contentFrame
+        divider.Parent = parent
         
-        if text then
+        if config.text then
             local line1 = Instance.new("Frame")
-            line1.Size = UDim2.new(0.3, 0, 0, 1)
+            line1.Size = UDim2.new(0.25, 0, 0, 1)
             line1.Position = UDim2.new(0, 0, 0.5, 0)
-            line1.BackgroundColor3 = IcarusCore.Themes[self.Theme].Border
+            line1.BackgroundColor3 = IcarusCore.Themes[theme].Border
             line1.BackgroundTransparency = 0.5
             line1.BorderSizePixel = 0
             line1.Parent = divider
             
             local label = Instance.new("TextLabel")
-            label.Size = UDim2.new(0.4, 0, 1, 0)
-            label.Position = UDim2.new(0.3, 0, 0, 0)
+            label.Size = UDim2.new(0.5, 0, 1, 0)
+            label.Position = UDim2.new(0.25, 0, 0, 0)
             label.BackgroundTransparency = 1
-            label.Text = text
-            label.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+            label.Text = config.text
+            label.TextColor3 = IcarusCore.Themes[theme].TextDim
             label.Font = Enum.Font.GothamBold
-            label.TextSize = 11
+            label.TextSize = 9
             label.Parent = divider
             
             local line2 = Instance.new("Frame")
-            line2.Size = UDim2.new(0.3, 0, 0, 1)
-            line2.Position = UDim2.new(0.7, 0, 0.5, 0)
-            line2.BackgroundColor3 = IcarusCore.Themes[self.Theme].Border
+            line2.Size = UDim2.new(0.25, 0, 0, 1)
+            line2.Position = UDim2.new(0.75, 0, 0.5, 0)
+            line2.BackgroundColor3 = IcarusCore.Themes[theme].Border
             line2.BackgroundTransparency = 0.5
             line2.BorderSizePixel = 0
             line2.Parent = divider
         end
         
-        return divider
-    end
-    
-    return tabFunctions
-end
-
-function IcarusLibrary:AddTheme(themeConfig)
-    local themeName = themeConfig.name or "Custom"
-    IcarusCore.Themes[themeName] = {
-        Background = themeConfig.background and (type(themeConfig.background) == "string" and Color3.fromHex(themeConfig.background) or themeConfig.background) or Color3.fromRGB(18, 18, 24),
-        Secondary = themeConfig.secondary and (type(themeConfig.secondary) == "string" and Color3.fromHex(themeConfig.secondary) or themeConfig.secondary) or Color3.fromRGB(24, 24, 32),
-        Tertiary = themeConfig.tertiary and (type(themeConfig.tertiary) == "string" and Color3.fromHex(themeConfig.tertiary) or themeConfig.tertiary) or Color3.fromRGB(32, 32, 42),
-        Border = themeConfig.border and (type(themeConfig.border) == "string" and Color3.fromHex(themeConfig.border) or themeConfig.border) or Color3.fromRGB(45, 45, 60),
-        Text = themeConfig.text and (type(themeConfig.text) == "string" and Color3.fromHex(themeConfig.text) or themeConfig.text) or Color3.fromRGB(255, 255, 255),
-        TextDim = themeConfig.text_dim and (type(themeConfig.text_dim) == "string" and Color3.fromHex(themeConfig.text_dim) or themeConfig.text_dim) or Color3.fromRGB(180, 180, 200),
-        Accent = themeConfig.accent and (type(themeConfig.accent) == "string" and Color3.fromHex(themeConfig.accent) or themeConfig.accent) or Color3.fromRGB(138, 43, 226),
-        AccentHover = themeConfig.accent_hover and (type(themeConfig.accent_hover) == "string" and Color3.fromHex(themeConfig.accent_hover) or themeConfig.accent_hover) or Color3.fromRGB(158, 63, 246),
-        AccentDark = themeConfig.accent_dark and (type(themeConfig.accent_dark) == "string" and Color3.fromHex(themeConfig.accent_dark) or themeConfig.accent_dark) or Color3.fromRGB(118, 23, 206),
-        Success = Color3.fromRGB(40, 201, 64),
-        Warning = Color3.fromRGB(255, 189, 68),
-        Danger = Color3.fromRGB(255, 95, 86),
-        Info = Color3.fromRGB(52, 152, 219)
-    }
-    IcarusCore.CurrentTheme = themeName
-end
-
-function IcarusLibrary:SetTheme(themeName)
-    if IcarusCore.Themes[themeName] then
-        IcarusCore.CurrentTheme = themeName
-        IcarusCore:Notify({
-            text = "Theme Changed",
-            description = "Theme set to " .. themeName,
-            type = "info",
-            duration = 2
-        })
+        return {Divider = divider}
     end
 end
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed then
+UserInputService.InputBegan:Connect(function(input, gp)
+    if not gp then
         for _, keybind in pairs(IcarusCore.Keybinds) do
             if input.KeyCode == keybind.Key then
                 keybind.Callback()
@@ -1864,12 +1551,12 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 task.spawn(function()
-    task.wait(0.3)
+    task.wait(0.2)
     IcarusCore:Notify({
-        text = "Icarus Library Loaded",
-        description = "Ultra Premium System Ready - v3.0",
+        text = "Icarus Library",
+        description = "Successfully loaded v3.0",
         type = "success",
-        duration = 2.5
+        duration = 2
     })
 end)
 
