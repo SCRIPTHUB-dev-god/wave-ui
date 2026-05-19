@@ -8,7 +8,7 @@ local Icarus = loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPT
 local win = Icarus:SetWindows({
     text = "My GUI",
     theme = "Dark",
-    size = (480, 300),
+    size = UDim2.fromOffset(480, 300),
     settransparent = 0.3,
     loadinggui = true
 })
