@@ -4,7 +4,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wav
 ```
 
 ```luau
-local Icarus = loadstring(game:HttpGet("..."))()
+local Icarus = loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wave-ui/refs/heads/main/main.lua"))()
 
 -- Buat toggle button dulu
 local win = Icarus:SetToggleGui({
