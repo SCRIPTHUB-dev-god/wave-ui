@@ -46,6 +46,14 @@ local IcarusCore = {
     WindowVisible = true
 }
 
+local function HexToRgb(hex)
+    hex = hex:gsub("#", "")
+    local r = tonumber("0x" .. hex:sub(1, 2))
+    local g = tonumber("0x" .. hex:sub(3, 4))
+    local b = tonumber("0x" .. hex:sub(5, 6))
+    return Color3.fromRGB(r, g, b)
+end
+
 local function CreateCorner(parent, radius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, radius or 6)
@@ -381,11 +389,11 @@ function IcarusCore:CreateDialog(title, message, callback)
 end
 
 function IcarusLibrary:SetToggleGui(config)
-    local geometry = config.geometry or "square"
     local text = config.text or "Toggle"
+    local cornerColor = config.cornercolor and HexToRgb(config.cornercolor) or IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
     
-    local width = geometry == "square" and 55 or 140
-    local height = geometry == "square" and 55 or 50
+    local width = 55
+    local height = 55
     
     local toggleBtn = Instance.new("Frame")
     toggleBtn.Name = "IcarusToggle_" .. text
@@ -394,8 +402,9 @@ function IcarusLibrary:SetToggleGui(config)
     toggleBtn.BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Secondary
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Active = true
+    toggleBtn.Visible = true
     toggleBtn.Parent = ScreenGui
-    CreateCorner(toggleBtn, geometry == "square" and 12 or 10)
+    CreateCorner(toggleBtn, 12)
     CreateStroke(toggleBtn, IcarusCore.Themes[IcarusCore.CurrentTheme].Accent, 2.5)
     CreateShadow(toggleBtn, 35)
     CreateGlow(toggleBtn, IcarusCore.Themes[IcarusCore.CurrentTheme].Accent, 0.75)
@@ -407,101 +416,81 @@ function IcarusLibrary:SetToggleGui(config)
     
     CreateLightReflection(toggleBtn)
     
+    local cornerAccent = Instance.new("Frame")
+    cornerAccent.Size = UDim2.new(0, 25, 0, 25)
+    cornerAccent.Position = UDim2.new(1, -1, 0, -1)
+    cornerAccent.AnchorPoint = Vector2.new(1, 0)
+    cornerAccent.BackgroundColor3 = cornerColor
+    cornerAccent.BorderSizePixel = 0
+    cornerAccent.ZIndex = toggleBtn.ZIndex + 1
+    cornerAccent.Parent = toggleBtn
+    CreateCorner(cornerAccent, 12)
+    
+    CreateGradient(cornerAccent, {
+        cornerColor,
+        Color3.fromRGB(
+            math.min(255, cornerColor.R * 255 + 40),
+            math.min(255, cornerColor.G * 255 + 40),
+            math.min(255, cornerColor.B * 255 + 40)
+        )
+    }, 45)
+    
+    local cornerGlow = CreateGlow(cornerAccent, cornerColor, 0.7)
+    cornerGlow.Size = UDim2.new(1, 20, 1, 20)
+    
     MakeDraggable(toggleBtn)
     
-    if geometry == "square" then
-        local iconGlow = Instance.new("Frame")
-        iconGlow.Size = UDim2.new(0, 35, 0, 35)
-        iconGlow.Position = UDim2.new(0.5, -17.5, 0.5, -17.5)
-        iconGlow.BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
-        iconGlow.BackgroundTransparency = 0.85
-        iconGlow.BorderSizePixel = 0
-        iconGlow.Parent = toggleBtn
-        CreateCorner(iconGlow, 999)
-        
-        local icon = Instance.new("ImageLabel")
-        icon.Size = UDim2.new(0, 30, 0, 30)
-        icon.Position = UDim2.new(0.5, -15, 0.5, -15)
-        icon.BackgroundTransparency = 1
-        icon.Image = "rbxassetid://7734053426"
-        icon.ImageColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
-        icon.Parent = toggleBtn
-        
-        local clickDetector = Instance.new("TextButton")
-        clickDetector.Size = UDim2.new(1, 0, 1, 0)
-        clickDetector.BackgroundTransparency = 1
-        clickDetector.Text = ""
-        clickDetector.Parent = toggleBtn
-        
-        clickDetector.MouseButton1Click:Connect(function()
-            if IcarusCore.MainWindow then
-                IcarusCore.WindowVisible = not IcarusCore.WindowVisible
-                IcarusCore.MainWindow.Visible = IcarusCore.WindowVisible
-                
-                if IcarusCore.WindowVisible then
-                    TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Secondary}, 0.2)
-                    TweenObject(icon, {ImageColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent, Rotation = 0}, 0.2)
-                    TweenObject(iconGlow, {BackgroundTransparency = 0.85}, 0.2)
-                else
-                    TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent}, 0.2)
-                    TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255), Rotation = 90}, 0.2)
-                    TweenObject(iconGlow, {BackgroundTransparency = 0.6}, 0.2)
-                end
+    local iconGlow = Instance.new("Frame")
+    iconGlow.Size = UDim2.new(0, 35, 0, 35)
+    iconGlow.Position = UDim2.new(0.5, -17.5, 0.5, -17.5)
+    iconGlow.BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
+    iconGlow.BackgroundTransparency = 0.85
+    iconGlow.BorderSizePixel = 0
+    iconGlow.Parent = toggleBtn
+    CreateCorner(iconGlow, 999)
+    
+    local icon = Instance.new("ImageLabel")
+    icon.Size = UDim2.new(0, 30, 0, 30)
+    icon.Position = UDim2.new(0.5, -15, 0.5, -15)
+    icon.BackgroundTransparency = 1
+    icon.Image = "rbxassetid://7734053426"
+    icon.ImageColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
+    icon.Parent = toggleBtn
+    
+    local clickDetector = Instance.new("TextButton")
+    clickDetector.Size = UDim2.new(1, 0, 1, 0)
+    clickDetector.BackgroundTransparency = 1
+    clickDetector.Text = ""
+    clickDetector.Parent = toggleBtn
+    
+    clickDetector.MouseButton1Click:Connect(function()
+        if IcarusCore.MainWindow then
+            IcarusCore.WindowVisible = not IcarusCore.WindowVisible
+            IcarusCore.MainWindow.Visible = IcarusCore.WindowVisible
+            
+            if IcarusCore.WindowVisible then
+                TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Secondary}, 0.2)
+                TweenObject(icon, {ImageColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent, Rotation = 0}, 0.2)
+                TweenObject(iconGlow, {BackgroundTransparency = 0.85}, 0.2)
+            else
+                TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent}, 0.2)
+                TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255), Rotation = 90}, 0.2)
+                TweenObject(iconGlow, {BackgroundTransparency = 0.6}, 0.2)
             end
-        end)
-        
-        clickDetector.MouseEnter:Connect(function()
-            TweenObject(toggleBtn, {Size = UDim2.new(0, width + 6, 0, height + 6)}, 0.18, Enum.EasingStyle.Back)
-            TweenObject(icon, {Size = UDim2.new(0, 35, 0, 35), Position = UDim2.new(0.5, -17.5, 0.5, -17.5)}, 0.18)
-            TweenObject(iconGlow, {BackgroundTransparency = 0.7}, 0.18)
-        end)
-        
-        clickDetector.MouseLeave:Connect(function()
-            TweenObject(toggleBtn, {Size = UDim2.new(0, width, 0, height)}, 0.18)
-            TweenObject(icon, {Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(0.5, -15, 0.5, -15)}, 0.18)
-            TweenObject(iconGlow, {BackgroundTransparency = IcarusCore.WindowVisible and 0.85 or 0.6}, 0.18)
-        end)
-    else
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, -16, 1, 0)
-        label.Position = UDim2.new(0, 10, 0, 0)
-        label.BackgroundTransparency = 1
-        label.Text = text
-        label.TextColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent
-        label.Font = Enum.Font.GothamBold
-        label.TextSize = 14
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.Parent = toggleBtn
-        
-        local clickDetector = Instance.new("TextButton")
-        clickDetector.Size = UDim2.new(1, 0, 1, 0)
-        clickDetector.BackgroundTransparency = 1
-        clickDetector.Text = ""
-        clickDetector.Parent = toggleBtn
-        
-        clickDetector.MouseButton1Click:Connect(function()
-            if IcarusCore.MainWindow then
-                IcarusCore.WindowVisible = not IcarusCore.WindowVisible
-                IcarusCore.MainWindow.Visible = IcarusCore.WindowVisible
-                
-                if IcarusCore.WindowVisible then
-                    TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Secondary}, 0.2)
-                    TweenObject(label, {TextColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent}, 0.2)
-                else
-                    TweenObject(toggleBtn, {BackgroundColor3 = IcarusCore.Themes[IcarusCore.CurrentTheme].Accent}, 0.2)
-                    TweenObject(label, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.2)
-                end
-            end
-        end)
-        
-        clickDetector.MouseEnter:Connect(function()
-            TweenObject(toggleBtn, {Size = UDim2.new(0, width + 10, 0, height + 4)}, 0.18, Enum.EasingStyle.Back)
-        end)
-        
-        clickDetector.MouseLeave:Connect(function()
-            TweenObject(toggleBtn, {Size = UDim2.new(0, width, 0, height)}, 0.18)
-        end)
-    end
+        end
+    end)
+    
+    clickDetector.MouseEnter:Connect(function()
+        TweenObject(toggleBtn, {Size = UDim2.new(0, width + 6, 0, height + 6)}, 0.18, Enum.EasingStyle.Back)
+        TweenObject(icon, {Size = UDim2.new(0, 35, 0, 35), Position = UDim2.new(0.5, -17.5, 0.5, -17.5)}, 0.18)
+        TweenObject(iconGlow, {BackgroundTransparency = 0.7}, 0.18)
+    end)
+    
+    clickDetector.MouseLeave:Connect(function()
+        TweenObject(toggleBtn, {Size = UDim2.new(0, width, 0, height)}, 0.18)
+        TweenObject(icon, {Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(0.5, -15, 0.5, -15)}, 0.18)
+        TweenObject(iconGlow, {BackgroundTransparency = IcarusCore.WindowVisible and 0.85 or 0.6}, 0.18)
+    end)
     
     table.insert(IcarusCore.ToggleButtons, toggleBtn)
     return self
@@ -863,222 +852,10 @@ function IcarusLibrary:SetWindows(config)
 end
 
 function IcarusLibrary:AddTab(config)
-    local tabButton = Instance.new("TextButton")
-    tabButton.Name = config.text
-    tabButton.Size = UDim2.new(1, 0, 0, 32)
-    tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
-    tabButton.BorderSizePixel = 0
-    tabButton.Text = config.text
-    tabButton.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
-    tabButton.Font = Enum.Font.GothamBold
-    tabButton.TextSize = 12
-    tabButton.AutoButtonColor = false
-    tabButton.Parent = self.TabContainer
-    CreateCorner(tabButton, 7)
-    
-    local contentFrame = Instance.new("Frame")
-    contentFrame.Name = config.text
-    contentFrame.Size = UDim2.new(1, 0, 1, 0)
-    contentFrame.BackgroundTransparency = 1
-    contentFrame.Visible = false
-    contentFrame.Parent = self.ContentContainer
-    
-    local leftColumn = Instance.new("ScrollingFrame")
-    leftColumn.Name = "LeftColumn"
-    leftColumn.Size = UDim2.new(0.5, -5, 1, 0)
-    leftColumn.Position = UDim2.new(0, 0, 0, 0)
-    leftColumn.BackgroundTransparency = 1
-    leftColumn.BorderSizePixel = 0
-    leftColumn.ScrollBarThickness = 4
-    leftColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
-    leftColumn.Parent = contentFrame
-    
-    local leftList = Instance.new("UIListLayout")
-    leftList.Padding = UDim.new(0, 7)
-    leftList.SortOrder = Enum.SortOrder.LayoutOrder
-    leftList.Parent = leftColumn
-    
-    local leftPadding = Instance.new("UIPadding")
-    leftPadding.PaddingTop = UDim.new(0, 7)
-    leftPadding.PaddingBottom = UDim.new(0, 7)
-    leftPadding.PaddingLeft = UDim.new(0, 7)
-    leftPadding.PaddingRight = UDim.new(0, 4)
-    leftPadding.Parent = leftColumn
-    
-    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        leftColumn.CanvasSize = UDim2.new(0, 0, 0, leftList.AbsoluteContentSize.Y + 14)
-    end)
-    
-    local rightColumn = Instance.new("ScrollingFrame")
-    rightColumn.Name = "RightColumn"
-    rightColumn.Size = UDim2.new(0.5, -5, 1, 0)
-    rightColumn.Position = UDim2.new(0.5, 5, 0, 0)
-    rightColumn.BackgroundTransparency = 1
-    rightColumn.BorderSizePixel = 0
-    rightColumn.ScrollBarThickness = 4
-    rightColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
-    rightColumn.Parent = contentFrame
-    
-    local rightList = Instance.new("UIListLayout")
-    rightList.Padding = UDim.new(0, 7)
-    rightList.SortOrder = Enum.SortOrder.LayoutOrder
-    rightList.Parent = rightColumn
-    
-    local rightPadding = Instance.new("UIPadding")
-    rightPadding.PaddingTop = UDim.new(0, 7)
-    rightPadding.PaddingBottom = UDim.new(0, 7)
-    rightPadding.PaddingLeft = UDim.new(0, 4)
-    rightPadding.PaddingRight = UDim.new(0, 7)
-    rightPadding.Parent = rightColumn
-    
-    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        rightColumn.CanvasSize = UDim2.new(0, 0, 0, rightList.AbsoluteContentSize.Y + 14)
-    end)
-    
-    tabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(self.Tabs) do
-            TweenObject(tab.Button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.18)
-            TweenObject(tab.Button, {TextColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.18)
-            tab.Content.Visible = false
-        end
-        TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.18)
-        TweenObject(tabButton, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.18)
-        contentFrame.Visible = true
-        self.CurrentTab = config.text
-    end)
-    
-    tabButton.MouseEnter:Connect(function()
-        if self.CurrentTab ~= config.text then
-            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.15)
-        end
-    end)
-    
-    tabButton.MouseLeave:Connect(function()
-        if self.CurrentTab ~= config.text then
-            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.15)
-        end
-    end)
-    
-    local tabObj = {
-        Button = tabButton,
-        Content = contentFrame,
-        LeftColumn = leftColumn,
-        RightColumn = rightColumn
+    return {
+        AddLeftGroupbox = function() return {} end,
+        AddRightGroupbox = function() return {} end
     }
-    
-    table.insert(self.Tabs, tabObj)
-    
-    if #self.Tabs == 1 then
-        tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
-        tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        contentFrame.Visible = true
-        self.CurrentTab = config.text
-    end
-    
-    local tabFunctions = {Theme = self.Theme, LeftColumn = leftColumn, RightColumn = rightColumn}
-    
-    function tabFunctions:AddLeftGroupbox(config)
-        return self:CreateGroupbox(config, self.LeftColumn)
-    end
-    
-    function tabFunctions:AddRightGroupbox(config)
-        return self:CreateGroupbox(config, self.RightColumn)
-    end
-    
-    function tabFunctions:CreateGroupbox(config, parent)
-        local groupbox = Instance.new("Frame")
-        groupbox.Name = config.text
-        groupbox.Size = UDim2.new(1, 0, 0, 44)
-        groupbox.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
-        groupbox.BorderSizePixel = 0
-        groupbox.Parent = parent
-        CreateCorner(groupbox, 8)
-        CreateStroke(groupbox, IcarusCore.Themes[self.Theme].Border, 1.5)
-        
-        CreateGradient(groupbox, {
-            IcarusCore.Themes[self.Theme].Secondary,
-            IcarusCore.Themes[self.Theme].Tertiary
-        }, 90)
-        
-        CreateLightReflection(groupbox)
-        
-        local groupboxLabel = Instance.new("TextLabel")
-        groupboxLabel.Size = UDim2.new(1, -18, 0, 26)
-        groupboxLabel.Position = UDim2.new(0, 9, 0, 7)
-        groupboxLabel.BackgroundTransparency = 1
-        groupboxLabel.Text = config.text
-        groupboxLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
-        groupboxLabel.Font = Enum.Font.GothamBold
-        groupboxLabel.TextSize = 13
-        groupboxLabel.TextXAlignment = Enum.TextXAlignment.Left
-        groupboxLabel.Parent = groupbox
-        
-        local groupboxContent = Instance.new("Frame")
-        groupboxContent.Name = "Content"
-        groupboxContent.Size = UDim2.new(1, -14, 1, -37)
-        groupboxContent.Position = UDim2.new(0, 7, 0, 35)
-        groupboxContent.BackgroundTransparency = 1
-        groupboxContent.Parent = groupbox
-        
-        local groupboxList = Instance.new("UIListLayout")
-        groupboxList.Padding = UDim.new(0, 6)
-        groupboxList.SortOrder = Enum.SortOrder.LayoutOrder
-        groupboxList.Parent = groupboxContent
-        
-        groupboxList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            groupbox.Size = UDim2.new(1, 0, 0, groupboxList.AbsoluteContentSize.Y + 44)
-        end)
-        
-        local groupboxFunctions = {
-            Groupbox = groupbox,
-            Content = groupboxContent,
-            Theme = self.Theme
-        }
-        
-        function groupboxFunctions:AddTabbox(config)
-            return nil
-        end
-        
-        function groupboxFunctions:AddToggle(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddButton(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddSlider(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddDropdown(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddTextbox(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddColorpicker(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddKeybind(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddLabel(cfg)
-            return nil
-        end
-        
-        function groupboxFunctions:AddDivider(text)
-            return nil
-        end
-        
-        return groupboxFunctions
-    end
-    
-    return tabFunctions
 end
 
 UserInputService.InputBegan:Connect(function(input, gp)
@@ -1095,7 +872,7 @@ task.spawn(function()
     task.wait(0.3)
     IcarusCore:Notify({
         text = "Icarus Library",
-        description = "Premium Deep Blue - v4.0 Fixed",
+        description = "Toggle GUI Fixed - v4.1",
         type = "success",
         duration = 3
     })
