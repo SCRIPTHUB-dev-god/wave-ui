@@ -112,7 +112,45 @@ local IcarusCore = {
     Notifications = {},
     MainWindow = nil,
     ToggleButton = nil,
-    WindowVisible = true
+    WindowVisible = true,
+    LucideIcons = {
+        home = "rbxassetid://10723434711",
+        settings = "rbxassetid://10734950309",
+        user = "rbxassetid://10734943633",
+        shield = "rbxassetid://10723407389",
+        star = "rbxassetid://10723424505",
+        heart = "rbxassetid://10723359328",
+        box = "rbxassetid://10723342881",
+        menu = "rbxassetid://10723395665",
+        search = "rbxassetid://10723407389",
+        bell = "rbxassetid://10723345088",
+        check = "rbxassetid://10734896302",
+        x = "rbxassetid://10747384394",
+        plus = "rbxassetid://10723424505",
+        minus = "rbxassetid://10723395055",
+        edit = "rbxassetid://10734924532",
+        trash = "rbxassetid://10723417155",
+        download = "rbxassetid://10723356829",
+        upload = "rbxassetid://10723404337",
+        folder = "rbxassetid://10723345088",
+        file = "rbxassetid://10723354532",
+        image = "rbxassetid://10723372167",
+        code = "rbxassetid://10709790948",
+        zap = "rbxassetid://10747377612",
+        crown = "rbxassetid://10709791437",
+        trophy = "rbxassetid://10723424505",
+        target = "rbxassetid://10723417155",
+        lock = "rbxassetid://10723387563",
+        unlock = "rbxassetid://10723404337",
+        eye = "rbxassetid://10723345088",
+        eyeoff = "rbxassetid://10723356829",
+        info = "rbxassetid://10723366434",
+        alert = "rbxassetid://10723345088",
+        rocket = "rbxassetid://10723407389",
+        flame = "rbxassetid://10723345088",
+        gamepad = "rbxassetid://10723359328",
+        sword = "rbxassetid://10723417155"
+    }
 }
 
 local function HexToRgb(hex)
@@ -121,6 +159,10 @@ local function HexToRgb(hex)
     local g = tonumber("0x" .. hex:sub(3, 4))
     local b = tonumber("0x" .. hex:sub(5, 6))
     return Color3.fromRGB(r, g, b)
+end
+
+local function GetLucideIcon(name)
+    return IcarusCore.LucideIcons[name] or IcarusCore.LucideIcons.box
 end
 
 local function CreateCorner(parent, radius)
@@ -252,8 +294,8 @@ end
 local function CreateTriangleToggle()
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Name = "IcarusToggle"
-    toggleFrame.Size = UDim2.new(0, 50, 0, 35)
-    toggleFrame.Position = UDim2.new(0.5, -25, 0, 5)
+    toggleFrame.Size = UDim2.new(0, 70, 0, 35)
+    toggleFrame.Position = UDim2.new(0.5, -35, 0, 5)
     toggleFrame.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
     toggleFrame.BackgroundTransparency = 0.65
     toggleFrame.BorderSizePixel = 0
@@ -308,12 +350,12 @@ local function CreateTriangleToggle()
     end)
     
     clickDetector.MouseEnter:Connect(function()
-        TweenObject(toggleFrame, {Size = UDim2.new(0, 55, 0, 38)}, 0.2, Enum.EasingStyle.Back)
+        TweenObject(toggleFrame, {Size = UDim2.new(0, 76, 0, 38)}, 0.2, Enum.EasingStyle.Back)
         TweenObject(triangle, {Size = UDim2.new(0, 23, 0, 21)}, 0.2)
     end)
     
     clickDetector.MouseLeave:Connect(function()
-        TweenObject(toggleFrame, {Size = UDim2.new(0, 50, 0, 35)}, 0.2)
+        TweenObject(toggleFrame, {Size = UDim2.new(0, 70, 0, 35)}, 0.2)
         TweenObject(triangle, {Size = UDim2.new(0, 20, 0, 18)}, 0.2)
     end)
     
@@ -581,7 +623,7 @@ function IcarusLibrary:SetWindows(config)
     window.BorderSizePixel = 0
     window.ClipsDescendants = false
     window.Active = true
-    window.Visible = false
+    window.Visible = autoshow
     window.Parent = ScreenGui
     CreateCorner(window, 16)
     CreateStroke(window, IcarusCore.Themes[themeName].Accent, 2.5)
@@ -614,7 +656,7 @@ function IcarusLibrary:SetWindows(config)
         IcarusCore.Themes[themeName].AccentHover
     }, 45)
     
-    local cornerGlow = CreateGlow(cornerTopRight, IcarusCore.Themes[themeName].Accent, 0.55, 50)
+    CreateGlow(cornerTopRight, IcarusCore.Themes[themeName].Accent, 0.55, 50)
     
     local cornerBottomLeft = Instance.new("Frame")
     cornerBottomLeft.Size = UDim2.new(0, 45, 0, 45)
@@ -631,7 +673,7 @@ function IcarusLibrary:SetWindows(config)
         IcarusCore.Themes[themeName].Accent
     }, 45)
     
-    local cornerGlow2 = CreateGlow(cornerBottomLeft, IcarusCore.Themes[themeName].Accent, 0.55, 50)
+    CreateGlow(cornerBottomLeft, IcarusCore.Themes[themeName].Accent, 0.55, 50)
     
     local topbar = Instance.new("Frame")
     topbar.Name = "Topbar"
@@ -845,6 +887,8 @@ function IcarusLibrary:SetWindows(config)
     IcarusCore.MainWindow = window
     
     if config.loadinggui then
+        window.Visible = false
+        
         local loadingScreen = Instance.new("Frame")
         loadingScreen.Name = "LoadingScreen"
         loadingScreen.Size = UDim2.new(1, 0, 1, 0)
@@ -862,7 +906,7 @@ function IcarusLibrary:SetWindows(config)
         loadingRing.ImageColor3 = IcarusCore.Themes[themeName].Accent
         loadingRing.Parent = loadingScreen
         
-        local loadingGlow = CreateGlow(loadingRing, IcarusCore.Themes[themeName].Accent, 0.65, 35)
+        CreateGlow(loadingRing, IcarusCore.Themes[themeName].Accent, 0.65, 35)
         
         local loadingText = Instance.new("TextLabel")
         loadingText.Size = UDim2.new(0, 240, 0, 30)
@@ -873,6 +917,8 @@ function IcarusLibrary:SetWindows(config)
         loadingText.Font = Enum.Font.GothamBold
         loadingText.TextSize = 15
         loadingText.Parent = loadingScreen
+        
+        window.Visible = true
         
         spawn(function()
             while loadingScreen.Parent do
@@ -885,22 +931,13 @@ function IcarusLibrary:SetWindows(config)
         task.delay(2, function()
             TweenObject(loadingScreen, {BackgroundTransparency = 1}, 0.45)
             TweenObject(loadingRing, {ImageTransparency = 1}, 0.45)
-            TweenObject(loadingGlow, {ImageTransparency = 1}, 0.45)
             TweenObject(loadingText, {TextTransparency = 1}, 0.45)
             task.wait(0.45)
             loadingScreen:Destroy()
             
-            if autoshow then
-                window.Visible = true
-                IcarusCore.WindowVisible = true
-            end
+            window.Visible = autoshow
+            IcarusCore.WindowVisible = autoshow
         end)
-    else
-        task.wait(0.15)
-        if autoshow then
-            window.Visible = true
-            IcarusCore.WindowVisible = true
-        end
     end
     
     local windowObj = {
@@ -917,10 +954,542 @@ function IcarusLibrary:SetWindows(config)
 end
 
 function IcarusLibrary:AddTab(config)
-    return {
-        AddLeftGroupbox = function() return {} end,
-        AddRightGroupbox = function() return {} end
+    local tabButton = Instance.new("TextButton")
+    tabButton.Name = config.name
+    tabButton.Size = UDim2.new(1, 0, 0, 36)
+    tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+    tabButton.BorderSizePixel = 0
+    tabButton.Text = ""
+    tabButton.AutoButtonColor = false
+    tabButton.Parent = self.TabContainer
+    CreateCorner(tabButton, 8)
+    
+    if config.icon then
+        local icon = Instance.new("ImageLabel")
+        icon.Size = UDim2.new(0, 18, 0, 18)
+        icon.Position = UDim2.new(0, 10, 0.5, -9)
+        icon.BackgroundTransparency = 1
+        icon.Image = GetLucideIcon(config.icon)
+        icon.ImageColor3 = IcarusCore.Themes[self.Theme].TextDim
+        icon.Parent = tabButton
+    end
+    
+    local tabLabel = Instance.new("TextLabel")
+    tabLabel.Size = UDim2.new(1, config.icon and -38 or -20, 1, 0)
+    tabLabel.Position = UDim2.new(0, config.icon and 32 or 10, 0, 0)
+    tabLabel.BackgroundTransparency = 1
+    tabLabel.Text = config.name
+    tabLabel.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+    tabLabel.Font = Enum.Font.GothamBold
+    tabLabel.TextSize = 13
+    tabLabel.TextXAlignment = Enum.TextXAlignment.Left
+    tabLabel.Parent = tabButton
+    
+    local contentFrame = Instance.new("Frame")
+    contentFrame.Name = config.name
+    contentFrame.Size = UDim2.new(1, 0, 1, 0)
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.Visible = false
+    contentFrame.Parent = self.ContentContainer
+    
+    local leftColumn = Instance.new("ScrollingFrame")
+    leftColumn.Name = "LeftColumn"
+    leftColumn.Size = UDim2.new(0.5, -5, 1, 0)
+    leftColumn.Position = UDim2.new(0, 0, 0, 0)
+    leftColumn.BackgroundTransparency = 1
+    leftColumn.BorderSizePixel = 0
+    leftColumn.ScrollBarThickness = 5
+    leftColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
+    leftColumn.Parent = contentFrame
+    
+    local leftList = Instance.new("UIListLayout")
+    leftList.Padding = UDim.new(0, 8)
+    leftList.SortOrder = Enum.SortOrder.LayoutOrder
+    leftList.Parent = leftColumn
+    
+    local leftPadding = Instance.new("UIPadding")
+    leftPadding.PaddingTop = UDim.new(0, 8)
+    leftPadding.PaddingBottom = UDim.new(0, 8)
+    leftPadding.PaddingLeft = UDim.new(0, 8)
+    leftPadding.PaddingRight = UDim.new(0, 4)
+    leftPadding.Parent = leftColumn
+    
+    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        leftColumn.CanvasSize = UDim2.new(0, 0, 0, leftList.AbsoluteContentSize.Y + 16)
+    end)
+    
+    local rightColumn = Instance.new("ScrollingFrame")
+    rightColumn.Name = "RightColumn"
+    rightColumn.Size = UDim2.new(0.5, -5, 1, 0)
+    rightColumn.Position = UDim2.new(0.5, 5, 0, 0)
+    rightColumn.BackgroundTransparency = 1
+    rightColumn.BorderSizePixel = 0
+    rightColumn.ScrollBarThickness = 5
+    rightColumn.ScrollBarImageColor3 = IcarusCore.Themes[self.Theme].Accent
+    rightColumn.Parent = contentFrame
+    
+    local rightList = Instance.new("UIListLayout")
+    rightList.Padding = UDim.new(0, 8)
+    rightList.SortOrder = Enum.SortOrder.LayoutOrder
+    rightList.Parent = rightColumn
+    
+    local rightPadding = Instance.new("UIPadding")
+    rightPadding.PaddingTop = UDim.new(0, 8)
+    rightPadding.PaddingBottom = UDim.new(0, 8)
+    rightPadding.PaddingLeft = UDim.new(0, 4)
+    rightPadding.PaddingRight = UDim.new(0, 8)
+    rightPadding.Parent = rightColumn
+    
+    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        rightColumn.CanvasSize = UDim2.new(0, 0, 0, rightList.AbsoluteContentSize.Y + 16)
+    end)
+    
+    tabButton.MouseButton1Click:Connect(function()
+        for _, tab in pairs(self.Tabs) do
+            TweenObject(tab.Button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.18)
+            TweenObject(tab.Label, {TextColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.18)
+            if tab.Icon then
+                TweenObject(tab.Icon, {ImageColor3 = IcarusCore.Themes[self.Theme].TextDim}, 0.18)
+            end
+            tab.Content.Visible = false
+        end
+        TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.18)
+        TweenObject(tabLabel, {TextColor3 = Color3.fromRGB(255, 255, 255)}, 0.18)
+        if config.icon then
+            local icon = tabButton:FindFirstChild("ImageLabel")
+            if icon then
+                TweenObject(icon, {ImageColor3 = Color3.fromRGB(255, 255, 255)}, 0.18)
+            end
+        end
+        contentFrame.Visible = true
+        self.CurrentTab = config.name
+    end)
+    
+    tabButton.MouseEnter:Connect(function()
+        if self.CurrentTab ~= config.name then
+            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.15)
+        end
+    end)
+    
+    tabButton.MouseLeave:Connect(function()
+        if self.CurrentTab ~= config.name then
+            TweenObject(tabButton, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.15)
+        end
+    end)
+    
+    local tabObj = {
+        Button = tabButton,
+        Label = tabLabel,
+        Icon = config.icon and tabButton:FindFirstChild("ImageLabel") or nil,
+        Content = contentFrame,
+        LeftColumn = leftColumn,
+        RightColumn = rightColumn,
+        Theme = self.Theme
     }
+    
+    table.insert(self.Tabs, tabObj)
+    
+    if #self.Tabs == 1 then
+        tabButton.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
+        tabLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        if config.icon then
+            local icon = tabButton:FindFirstChild("ImageLabel")
+            if icon then
+                icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end
+        contentFrame.Visible = true
+        self.CurrentTab = config.name
+    end
+    
+    local tabFunctions = {
+        Theme = self.Theme,
+        LeftColumn = leftColumn,
+        RightColumn = rightColumn
+    }
+    
+    function tabFunctions:AddLeftGroupbox(cfg)
+        return self:CreateGroupbox(cfg, self.LeftColumn)
+    end
+    
+    function tabFunctions:AddRightGroupbox(cfg)
+        return self:CreateGroupbox(cfg, self.RightColumn)
+    end
+    
+    function tabFunctions:CreateGroupbox(cfg, parent)
+        local groupbox = Instance.new("Frame")
+        groupbox.Name = cfg.name
+        groupbox.Size = UDim2.new(1, 0, 0, 48)
+        groupbox.BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary
+        groupbox.BorderSizePixel = 0
+        groupbox.Parent = parent
+        CreateCorner(groupbox, 10)
+        CreateStroke(groupbox, IcarusCore.Themes[self.Theme].Border, 1.8)
+        
+        CreateGradient(groupbox, {
+            IcarusCore.Themes[self.Theme].Secondary,
+            IcarusCore.Themes[self.Theme].Tertiary
+        }, 90)
+        
+        CreateLightReflection(groupbox, UDim2.new(0.7, 0, 0.32, 0))
+        
+        local headerFrame = Instance.new("Frame")
+        headerFrame.Size = UDim2.new(1, 0, 0, 30)
+        headerFrame.BackgroundTransparency = 1
+        headerFrame.Parent = groupbox
+        
+        if cfg.icon then
+            local icon = Instance.new("ImageLabel")
+            icon.Size = UDim2.new(0, 16, 0, 16)
+            icon.Position = UDim2.new(0, 10, 0, 7)
+            icon.BackgroundTransparency = 1
+            icon.Image = GetLucideIcon(cfg.icon)
+            icon.ImageColor3 = IcarusCore.Themes[self.Theme].Accent
+            icon.Parent = headerFrame
+        end
+        
+        local groupboxLabel = Instance.new("TextLabel")
+        groupboxLabel.Size = UDim2.new(1, cfg.icon and -36 or -20, 0, 30)
+        groupboxLabel.Position = UDim2.new(0, cfg.icon and 30 or 10, 0, 0)
+        groupboxLabel.BackgroundTransparency = 1
+        groupboxLabel.Text = cfg.name
+        groupboxLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+        groupboxLabel.Font = Enum.Font.GothamBold
+        groupboxLabel.TextSize = 14
+        groupboxLabel.TextXAlignment = Enum.TextXAlignment.Left
+        groupboxLabel.Parent = headerFrame
+        
+        local groupboxContent = Instance.new("Frame")
+        groupboxContent.Name = "Content"
+        groupboxContent.Size = UDim2.new(1, -16, 1, -38)
+        groupboxContent.Position = UDim2.new(0, 8, 0, 36)
+        groupboxContent.BackgroundTransparency = 1
+        groupboxContent.Parent = groupbox
+        
+        local groupboxList = Instance.new("UIListLayout")
+        groupboxList.Padding = UDim.new(0, 7)
+        groupboxList.SortOrder = Enum.SortOrder.LayoutOrder
+        groupboxList.Parent = groupboxContent
+        
+        groupboxList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            groupbox.Size = UDim2.new(1, 0, 0, groupboxList.AbsoluteContentSize.Y + 48)
+        end)
+        
+        local groupboxFunctions = {
+            Groupbox = groupbox,
+            Content = groupboxContent,
+            Theme = self.Theme
+        }
+        
+        function groupboxFunctions:AddLabel(cfg)
+            local label = Instance.new("TextLabel")
+            label.Name = "Label"
+            label.Size = UDim2.new(1, 0, 0, 18)
+            label.BackgroundTransparency = 1
+            label.Text = cfg.text
+            label.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 12
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Parent = self.Content
+            return label
+        end
+        
+        function groupboxFunctions:AddButton(cfg)
+            local button = Instance.new("TextButton")
+            button.Name = "Button"
+            button.Size = UDim2.new(1, 0, 0, 32)
+            button.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            button.BorderSizePixel = 0
+            button.Text = cfg.text
+            button.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            button.Font = Enum.Font.GothamBold
+            button.TextSize = 13
+            button.AutoButtonColor = false
+            button.Parent = self.Content
+            CreateCorner(button, 7)
+            CreateStroke(button, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            button.MouseButton1Click:Connect(function()
+                TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent}, 0.1)
+                task.wait(0.1)
+                TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.1)
+                if cfg.callback then
+                    cfg.callback()
+                end
+            end)
+            
+            button.MouseEnter:Connect(function()
+                TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Secondary}, 0.15)
+            end)
+            
+            button.MouseLeave:Connect(function()
+                TweenObject(button, {BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary}, 0.15)
+            end)
+            
+            return button
+        end
+        
+        function groupboxFunctions:AddParagraph(cfg)
+            local paragraphFrame = Instance.new("Frame")
+            paragraphFrame.Name = "Paragraph"
+            paragraphFrame.Size = UDim2.new(1, 0, 0, 50)
+            paragraphFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            paragraphFrame.BorderSizePixel = 0
+            paragraphFrame.Parent = self.Content
+            CreateCorner(paragraphFrame, 7)
+            CreateStroke(paragraphFrame, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            local titleLabel = Instance.new("TextLabel")
+            titleLabel.Size = UDim2.new(1, -16, 0, 18)
+            titleLabel.Position = UDim2.new(0, 8, 0, 6)
+            titleLabel.BackgroundTransparency = 1
+            titleLabel.Text = cfg.text
+            titleLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            titleLabel.Font = Enum.Font.GothamBold
+            titleLabel.TextSize = 13
+            titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            titleLabel.Parent = paragraphFrame
+            
+            local descLabel = Instance.new("TextLabel")
+            descLabel.Size = UDim2.new(1, -16, 0, 24)
+            descLabel.Position = UDim2.new(0, 8, 0, 24)
+            descLabel.BackgroundTransparency = 1
+            descLabel.Text = cfg.description
+            descLabel.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+            descLabel.Font = Enum.Font.Gotham
+            descLabel.TextSize = 11
+            descLabel.TextXAlignment = Enum.TextXAlignment.Left
+            descLabel.TextYAlignment = Enum.TextYAlignment.Top
+            descLabel.TextWrapped = true
+            descLabel.Parent = paragraphFrame
+            
+            return paragraphFrame
+        end
+        
+        function groupboxFunctions:AddToggle(cfg)
+            local toggleFrame = Instance.new("Frame")
+            toggleFrame.Name = "Toggle"
+            toggleFrame.Size = UDim2.new(1, 0, 0, 32)
+            toggleFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            toggleFrame.BorderSizePixel = 0
+            toggleFrame.Parent = self.Content
+            CreateCorner(toggleFrame, 7)
+            CreateStroke(toggleFrame, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            local toggleLabel = Instance.new("TextLabel")
+            toggleLabel.Size = UDim2.new(1, -50, 1, 0)
+            toggleLabel.Position = UDim2.new(0, 10, 0, 0)
+            toggleLabel.BackgroundTransparency = 1
+            toggleLabel.Text = cfg.text
+            toggleLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            toggleLabel.Font = Enum.Font.Gotham
+            toggleLabel.TextSize = 12
+            toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            toggleLabel.Parent = toggleFrame
+            
+            local toggled = cfg.default or false
+            
+            local toggleButton = Instance.new("TextButton")
+            toggleButton.Size = UDim2.new(0, 38, 0, 20)
+            toggleButton.Position = UDim2.new(1, -44, 0.5, -10)
+            toggleButton.BackgroundColor3 = toggled and IcarusCore.Themes[self.Theme].Success or IcarusCore.Themes[self.Theme].Border
+            toggleButton.BorderSizePixel = 0
+            toggleButton.Text = ""
+            toggleButton.AutoButtonColor = false
+            toggleButton.Parent = toggleFrame
+            CreateCorner(toggleButton, 999)
+            
+            local toggleIndicator = Instance.new("Frame")
+            toggleIndicator.Size = UDim2.new(0, 16, 0, 16)
+            toggleIndicator.Position = toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+            toggleIndicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            toggleIndicator.BorderSizePixel = 0
+            toggleIndicator.Parent = toggleButton
+            CreateCorner(toggleIndicator, 999)
+            
+            toggleButton.MouseButton1Click:Connect(function()
+                toggled = not toggled
+                TweenObject(toggleButton, {
+                    BackgroundColor3 = toggled and IcarusCore.Themes[self.Theme].Success or IcarusCore.Themes[self.Theme].Border
+                }, 0.2)
+                TweenObject(toggleIndicator, {
+                    Position = toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+                }, 0.2, Enum.EasingStyle.Back)
+                if cfg.callback then
+                    cfg.callback(toggled)
+                end
+            end)
+            
+            return toggleFrame
+        end
+        
+        function groupboxFunctions:AddSlider(cfg)
+            local sliderFrame = Instance.new("Frame")
+            sliderFrame.Name = "Slider"
+            sliderFrame.Size = UDim2.new(1, 0, 0, 42)
+            sliderFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            sliderFrame.BorderSizePixel = 0
+            sliderFrame.Parent = self.Content
+            CreateCorner(sliderFrame, 7)
+            CreateStroke(sliderFrame, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            local sliderLabel = Instance.new("TextLabel")
+            sliderLabel.Size = UDim2.new(1, -50, 0, 16)
+            sliderLabel.Position = UDim2.new(0, 10, 0, 6)
+            sliderLabel.BackgroundTransparency = 1
+            sliderLabel.Text = cfg.text
+            sliderLabel.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            sliderLabel.Font = Enum.Font.Gotham
+            sliderLabel.TextSize = 12
+            sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+            sliderLabel.Parent = sliderFrame
+            
+            local sliderValue = Instance.new("TextLabel")
+            sliderValue.Size = UDim2.new(0, 40, 0, 16)
+            sliderValue.Position = UDim2.new(1, -46, 0, 6)
+            sliderValue.BackgroundTransparency = 1
+            sliderValue.Text = tostring(cfg.default or cfg.min)
+            sliderValue.TextColor3 = IcarusCore.Themes[self.Theme].Accent
+            sliderValue.Font = Enum.Font.GothamBold
+            sliderValue.TextSize = 12
+            sliderValue.TextXAlignment = Enum.TextXAlignment.Right
+            sliderValue.Parent = sliderFrame
+            
+            local sliderBar = Instance.new("Frame")
+            sliderBar.Size = UDim2.new(1, -20, 0, 6)
+            sliderBar.Position = UDim2.new(0, 10, 1, -14)
+            sliderBar.BackgroundColor3 = IcarusCore.Themes[self.Theme].Border
+            sliderBar.BorderSizePixel = 0
+            sliderBar.Parent = sliderFrame
+            CreateCorner(sliderBar, 999)
+            
+            local sliderFill = Instance.new("Frame")
+            sliderFill.Size = UDim2.new(0, 0, 1, 0)
+            sliderFill.BackgroundColor3 = IcarusCore.Themes[self.Theme].Accent
+            sliderFill.BorderSizePixel = 0
+            sliderFill.Parent = sliderBar
+            CreateCorner(sliderFill, 999)
+            
+            local currentValue = cfg.default or cfg.min
+            local percentage = (currentValue - cfg.min) / (cfg.max - cfg.min)
+            sliderFill.Size = UDim2.new(percentage, 0, 1, 0)
+            
+            local dragging = false
+            
+            sliderBar.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
+                end
+            end)
+            
+            sliderBar.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = false
+                end
+            end)
+            
+            UserInputService.InputChanged:Connect(function(input)
+                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                    local mousePos = input.Position.X
+                    local barPos = sliderBar.AbsolutePosition.X
+                    local barSize = sliderBar.AbsoluteSize.X
+                    local percentage = math.clamp((mousePos - barPos) / barSize, 0, 1)
+                    currentValue = math.floor(cfg.min + (cfg.max - cfg.min) * percentage)
+                    sliderValue.Text = tostring(currentValue)
+                    TweenObject(sliderFill, {Size = UDim2.new(percentage, 0, 1, 0)}, 0.1)
+                    if cfg.callback then
+                        cfg.callback(currentValue)
+                    end
+                end
+            end)
+            
+            return sliderFrame
+        end
+        
+        function groupboxFunctions:AddDropdown(cfg)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Name = "Dropdown"
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 32)
+            dropdownFrame.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            dropdownFrame.BorderSizePixel = 0
+            dropdownFrame.Parent = self.Content
+            CreateCorner(dropdownFrame, 7)
+            CreateStroke(dropdownFrame, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Size = UDim2.new(1, -30, 1, 0)
+            dropdownLabel.Position = UDim2.new(0, 10, 0, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.Text = cfg.text
+            dropdownLabel.TextColor3 = IcarusCore.Themes[self.Theme].TextDim
+            dropdownLabel.Font = Enum.Font.Gotham
+            dropdownLabel.TextSize = 12
+            dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+            dropdownLabel.Parent = dropdownFrame
+            
+            local dropdownArrow = Instance.new("ImageLabel")
+            dropdownArrow.Size = UDim2.new(0, 14, 0, 14)
+            dropdownArrow.Position = UDim2.new(1, -20, 0.5, -7)
+            dropdownArrow.BackgroundTransparency = 1
+            dropdownArrow.Image = "rbxassetid://7733992358"
+            dropdownArrow.ImageColor3 = IcarusCore.Themes[self.Theme].TextDim
+            dropdownArrow.Rotation = 180
+            dropdownArrow.Parent = dropdownFrame
+            
+            return dropdownFrame
+        end
+        
+        function groupboxFunctions:AddDivider()
+            local divider = Instance.new("Frame")
+            divider.Name = "Divider"
+            divider.Size = UDim2.new(1, 0, 0, 1)
+            divider.BackgroundColor3 = IcarusCore.Themes[self.Theme].Border
+            divider.BorderSizePixel = 0
+            divider.Parent = self.Content
+            return divider
+        end
+        
+        function groupboxFunctions:AddTextbox(cfg)
+            local textboxFrame = Instance.new("Frame")
+            textboxFrame.Name = "Textbox"
+            textboxFrame.Size = UDim2.new(1, 0, 0, 32)
+            textboxFrame.BackgroundTransparency = 1
+            textboxFrame.Parent = self.Content
+            
+            local textbox = Instance.new("TextBox")
+            textbox.Size = UDim2.new(1, 0, 1, 0)
+            textbox.BackgroundColor3 = IcarusCore.Themes[self.Theme].Tertiary
+            textbox.BorderSizePixel = 0
+            textbox.Text = ""
+            textbox.PlaceholderText = cfg.placeholder or "Enter text..."
+            textbox.TextColor3 = IcarusCore.Themes[self.Theme].Text
+            textbox.PlaceholderColor3 = IcarusCore.Themes[self.Theme].TextDim
+            textbox.Font = Enum.Font.Gotham
+            textbox.TextSize = 12
+            textbox.TextXAlignment = Enum.TextXAlignment.Left
+            textbox.Parent = textboxFrame
+            CreateCorner(textbox, 7)
+            CreateStroke(textbox, IcarusCore.Themes[self.Theme].Border, 1.5)
+            
+            local textboxPadding = Instance.new("UIPadding")
+            textboxPadding.PaddingLeft = UDim.new(0, 10)
+            textboxPadding.PaddingRight = UDim.new(0, 10)
+            textboxPadding.Parent = textbox
+            
+            textbox.FocusLost:Connect(function(enter)
+                if enter and cfg.callback then
+                    cfg.callback(textbox.Text)
+                end
+            end)
+            
+            return textboxFrame
+        end
+        
+        return groupboxFunctions
+    end
+    
+    return tabFunctions
 end
 
 UserInputService.InputBegan:Connect(function(input, gp)
@@ -934,10 +1503,10 @@ UserInputService.InputBegan:Connect(function(input, gp)
 end)
 
 task.spawn(function()
-    task.wait(0.4)
+    task.wait(0.5)
     IcarusCore:Notify({
         text = "Icarus Library Premium",
-        description = "Multi-Theme System Loaded • v5.0",
+        description = "Full Element System • v5.0",
         type = "success",
         duration = 3.5
     })
