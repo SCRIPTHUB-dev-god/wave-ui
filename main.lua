@@ -5,7 +5,7 @@ local userInputService = game:GetService("UserInputService")
 local tweenService = game:GetService("TweenService")
 
 local oldGui = playerGui:FindFirstChild("PremiumMobileGui")
-if oldGui then 
+if oldGui then
 	oldGui:Destroy()
 end
 
@@ -69,7 +69,7 @@ task.spawn(function()
 	local success, content = pcall(function()
 		return players:GetUserThumbnailAsync(localPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
 	end)
-	if success then 
+	if success then
 		pfpLabel.Image = content
 	end
 end)
@@ -95,7 +95,7 @@ waveText.TextXAlignment = Enum.TextXAlignment.Left
 waveText.Parent = animFrame
 
 task.spawn(function()
-	while true do 
+	while true do
 		waveText.Position = UDim2.new(0, -100, 0, 0)
 		local tween = tweenService:Create(waveText, TweenInfo.new(6, Enum.EasingStyle.Linear), {Position = UDim2.new(1, 0, 0, 0)})
 		tween:Play()
@@ -350,16 +350,16 @@ toggleStroke.Color = Color3.fromRGB(255, 255, 255)
 toggleStroke.Parent = toggleUI
 
 local toggleGradient = Instance.new("UIGradient")
-toggleGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 185)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(75, 75, 80)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 180, 185))
+toggleGradient.Color = ColorSequence.new({ 
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 185)), 
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(75, 75, 80)), 
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 180, 185)) 
 })
 toggleGradient.Parent = toggleStroke
 
 task.spawn(function()
 	local rot = 0
-	while true do 
+	while true do
 		rot = (rot + 4) % 360
 		toggleGradient.Rotation = rot
 		task.wait(0.02)
@@ -375,7 +375,6 @@ dragBtnToggle.Text = ""
 dragBtnToggle.Parent = toggleUI
 
 local iconColor = Color3.fromRGB(140, 140, 145)
-
 local line1 = Instance.new("Frame")
 line1.Name = "Line1"
 line1.Size = UDim2.new(0, 12, 0, 2)
@@ -424,14 +423,13 @@ toggleClickBtn.Parent = toggleUI
 
 local dragging = false
 local dragInput, dragStart, startPos
-
 local function update(input)
 	local delta = input.Position - dragStart
 	mainUI.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
 topBar.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
 		dragStart = input.Position
 		startPos = mainUI.Position
@@ -447,9 +445,8 @@ end)
 
 local tDragging = false
 local tDragStart, tStartPos
-
 dragBtnToggle.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		tDragging = true
 		tDragStart = input.Position
 		tStartPos = toggleUI.Position
@@ -462,9 +459,8 @@ end)
 local scaleChangedBindable = Instance.new("BindableEvent")
 local resizing = false
 local resizeStart, startScale
-
 resizeBtn.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		resizing = true
 		resizeStart = input.Position
 		startScale = uiScale.Scale
@@ -475,12 +471,12 @@ resizeBtn.InputBegan:Connect(function(input)
 end)
 
 userInputService.InputChanged:Connect(function(input)
-	if dragging and input == dragInput then 
+	if dragging and input == dragInput then
 		update(input)
-	elseif tDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then 
+	elseif tDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 		local delta = input.Position - tDragStart
 		toggleUI.Position = UDim2.new(tStartPos.X.Scale, tStartPos.X.Offset + delta.X, tStartPos.Y.Scale, tStartPos.Y.Offset + delta.Y)
-	elseif resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then 
+	elseif resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 		local delta = input.Position - resizeStart
 		local deltaX = delta.X
 		local newScale = startScale + (deltaX / 300)
@@ -523,10 +519,10 @@ local isTransitioning = false
 local library = {}
 
 function library:CreateWindow(config)
-	if config.title then 
+	if config.title then
 		title.Text = string.upper(config.title)
 	end
-	if config.desc then 
+	if config.desc then
 		desc.Text = config.desc
 	end
 	if config.footer then
@@ -554,15 +550,9 @@ function library:CreateWindow(config)
 	function windowApi:SetDesc(newDesc)
 		desc.Text = newDesc
 	end
-
-	function windowApi:SetToggleTitle(newToggleTitle)
-		toggleClickBtn.Text = newToggleTitle
-	end
-
 	function windowApi:SetFooter(newFooterText)
 		footerText.Text = newFooterText
 	end
-
 	function windowApi:Open(state)
 		if state == true then
 			mainUI.Visible = true
@@ -577,8 +567,8 @@ function library:CreateWindow(config)
 end
 
 function library:SetTopTags(tagsList)
-	for _, child in pairs(tagsContainer:GetChildren()) do 
-		if child:IsA("Frame") then 
+	for _, child in pairs(tagsContainer:GetChildren()) do
+		if child:IsA("Frame") then
 			child:Destroy()
 		end
 	end
@@ -588,14 +578,14 @@ function library:SetTopTags(tagsList)
 	local totalWidth = 130
 	local padding = 5
 	local itemWidth = 0
-	if count == 1 then 
+	if count == 1 then
 		itemWidth = totalWidth
-	elseif count == 2 then 
+	elseif count == 2 then
 		itemWidth = (totalWidth - padding) / 2
-	elseif count == 3 then 
+	elseif count == 3 then
 		itemWidth = (totalWidth - (padding * 2)) / 3
 	end
-	for i = 1, count do 
+	for i = 1, count do
 		local tagFrame = Instance.new("Frame")
 		tagFrame.Size = UDim2.new(0, itemWidth, 1, 0)
 		tagFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 38)
@@ -679,13 +669,13 @@ function library:CreateTab(tabName)
 		isTransitioning = true
 		local oldPage = pages[currentTabIndex]
 		local newPage = page
-		for _, t in pairs(tabs) do 
+		for _, t in pairs(tabs) do
 			t.TextColor3 = Color3.fromRGB(160, 160, 165)
 			t.UIStroke.Color = Color3.fromRGB(48, 48, 52)
 		end
 		tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 		tabBtn.UIStroke.Color = Color3.fromRGB(90, 90, 95)
-		if thisTabIndex < currentTabIndex then 
+		if thisTabIndex < currentTabIndex then
 			newPage.Position = UDim2.new(-1, 0, 0, 0)
 			newPage.Visible = true
 			tweenService:Create(oldPage, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0, 0)}):Play()
@@ -706,7 +696,7 @@ function library:CreateTab(tabName)
 		isTransitioning = false
 	end)
 	
-	if #pages == 1 then 
+	if #pages == 1 then
 		page.Visible = true
 		tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 		tabBtn.UIStroke.Color = Color3.fromRGB(90, 90, 95)
@@ -717,7 +707,7 @@ function library:CreateTab(tabName)
 	
 	function pageElements:CreateGroupBox(boxTitle, layoutType, initialState)
 		local isExpanded = true
-		if initialState == "close" then 
+		if initialState == "close" then
 			isExpanded = false
 		end
 		local groupBox = Instance.new("Frame")
@@ -796,8 +786,8 @@ function library:CreateTab(tabName)
 		local function updateDimensions()
 			local currentScale = uiScale.Scale
 			local adjustedContentHeight = 0
-			if hasTabs then 
-				if activeTabPageLayout then 
+			if hasTabs then
+				if activeTabPageLayout then
 					groupPagesContainer.Size = UDim2.new(1, 0, 0, activeTabPageLayout.AbsoluteContentSize.Y)
 					adjustedContentHeight = groupTabBar.Size.Y.Offset + 4 + (activeTabPageLayout.AbsoluteContentSize.Y / currentScale)
 				end
@@ -807,14 +797,14 @@ function library:CreateTab(tabName)
 			local totalNeeded = adjustedContentHeight + 40
 			currentCalculatedHeight = totalNeeded
 			
-			if isExpanded then 
+			if isExpanded then
 				groupBox.Size = UDim2.new(groupBox.Size.X.Scale, groupBox.Size.X.Offset, 0, currentCalculatedHeight)
 				
-				if layoutType ~= "allside" and groupBox.Parent:IsA("Frame") then 
+				if layoutType ~= "allside" and groupBox.Parent:IsA("Frame") then
 					local row = groupBox.Parent
 					local maxTarget = 30
-					for _, child in pairs(row:GetChildren()) do 
-						if child:IsA("Frame") and child.Size.Y.Offset > maxTarget then 
+					for _, child in pairs(row:GetChildren()) do
+						if child:IsA("Frame") and child.Size.Y.Offset > maxTarget then
 							maxTarget = child.Size.Y.Offset
 						end
 					end
@@ -836,13 +826,13 @@ function library:CreateTab(tabName)
 			
 			tweenService:Create(groupBox, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = targetSize}):Play()
 			
-			if layoutType ~= "allside" and groupBox.Parent:IsA("Frame") then 
+			if layoutType ~= "allside" and groupBox.Parent:IsA("Frame") then
 				local row = groupBox.Parent
 				local maxTarget = collapsedHeight
-				for _, child in pairs(row:GetChildren()) do 
-					if child:IsA("Frame") then 
+				for _, child in pairs(row:GetChildren()) do
+					if child:IsA("Frame") then
 						local currentH = (child == groupBox) and targetHeight or child.Size.Y.Offset
-						if currentH > maxTarget then 
+						if currentH > maxTarget then
 							maxTarget = currentH
 						end
 					end
@@ -851,20 +841,20 @@ function library:CreateTab(tabName)
 			end
 		end)
 		
-		if layoutType == "allside" then 
+		if layoutType == "allside" then
 			currentDualRow = nil
 			groupBox.Size = UDim2.new(1, 0, 0, isExpanded and currentCalculatedHeight or collapsedHeight)
 			groupBox.Parent = page
 		else
 			local canReuse = false
-			if currentDualRow then 
-				if layoutType == "left" and not currentDualRow:GetAttribute("LeftTaken") then 
+			if currentDualRow then
+				if layoutType == "left" and not currentDualRow:GetAttribute("LeftTaken") then
 					canReuse = true
-				elseif layoutType == "right" and not currentDualRow:GetAttribute("RightTaken") then 
+				elseif layoutType == "right" and not currentDualRow:GetAttribute("RightTaken") then
 					canReuse = true
 				end
 			end
-			if not canReuse then 
+			if not canReuse then
 				currentDualRow = Instance.new("Frame")
 				currentDualRow.Size = UDim2.new(1, 0, 0, isExpanded and currentCalculatedHeight or collapsedHeight)
 				currentDualRow.BackgroundTransparency = 1
@@ -873,11 +863,11 @@ function library:CreateTab(tabName)
 				currentDualRow:SetAttribute("RightTaken", false)
 			end
 			groupBox.Size = UDim2.new(0.49, 0, 0, isExpanded and currentCalculatedHeight or collapsedHeight)
-			if layoutType == "left" then 
+			if layoutType == "left" then
 				groupBox.Position = UDim2.new(0, 0, 0, 0)
 				groupBox.Parent = currentDualRow
 				currentDualRow:SetAttribute("LeftTaken", true)
-			elseif layoutType == "right" then 
+			elseif layoutType == "right" then
 				groupBox.Position = UDim2.new(0.51, 0, 0, 0)
 				groupBox.Parent = currentDualRow
 				currentDualRow:SetAttribute("RightTaken", true)
@@ -998,7 +988,7 @@ function library:CreateTab(tabName)
 			end
 			
 			bar.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					sliding = true
 					updateSlider(input)
 				end
@@ -1018,7 +1008,7 @@ function library:CreateTab(tabName)
 			dropFrame.Size = UDim2.new(1, 0, 0, 24)
 			dropFrame.BackgroundColor3 = Color3.fromRGB(34, 34, 36)
 			dropFrame.ClipsDescendants = true
-			dropFrame.Parent = boxContent
+			dropFrame.Parent = dropFrame
 			Instance.new("UICorner", dropFrame).CornerRadius = UDim.new(0, 5)
 			local str = Instance.new("UIStroke", dropFrame)
 			str.Color = Color3.fromRGB(50, 50, 55)
@@ -1041,7 +1031,7 @@ function library:CreateTab(tabName)
 			local listLayout = Instance.new("UIListLayout")
 			listLayout.Parent = listFrame
 			
-			for _, option in pairs(optionsList) do 
+			for _, option in pairs(optionsList) do
 				local optBtn = Instance.new("TextButton")
 				optBtn.Size = UDim2.new(1, 0, 0, 20)
 				optBtn.BackgroundTransparency = 1
@@ -1148,13 +1138,13 @@ function library:CreateTab(tabName)
 		
 		function innerElements:tabbox(tabName)
 			local allowedMax = (layoutType == "allside") and 5 or 3
-			if #tabBoxPages >= allowedMax then 
+			if #tabBoxPages >= allowedMax then
 				return nil
 			end
-			if not hasTabs then 
+			if not hasTabs then
 				hasTabs = true
-				for _, child in pairs(boxContent:GetChildren()) do 
-					if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then 
+				for _, child in pairs(boxContent:GetChildren()) do
+					if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
 						child:Destroy()
 					end
 				end
@@ -1214,9 +1204,9 @@ function library:CreateTab(tabName)
 			local totalTabs = #tabBoxButtons
 			local padTotal = (totalTabs - 1) * 4
 			
-			if totalTabs >= 2 then 
+			if totalTabs >= 2 then
 				groupTabBar.Size = UDim2.new(1, 0, 0, 14)
-				for _, btn in pairs(tabBoxButtons) do 
+				for _, btn in pairs(tabBoxButtons) do
 					btn.Size = UDim2.new(1 / totalTabs, -(padTotal / totalTabs), 1, 0)
 					btn.TextSize = 9
 				end
@@ -1225,7 +1215,7 @@ function library:CreateTab(tabName)
 				tabBtn.Size = UDim2.new(1, 0, 1, 0)
 			end
 			
-			if thisIdx == 1 then 
+			if thisIdx == 1 then
 				tPage.Visible = true
 				tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 				tabBtn.UIStroke.Color = Color3.fromRGB(90, 90, 95)
@@ -1233,14 +1223,14 @@ function library:CreateTab(tabName)
 			end
 			
 			tLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-				if currentTabBoxIndex == thisIdx then 
+				if currentTabBoxIndex == thisIdx then
 					updateDimensions()
 				end
 			end)
 			
 			tabBtn.MouseButton1Click:Connect(function()
 				if currentTabBoxIndex == thisIdx then return end
-				for i, btn in pairs(tabBoxButtons) do 			
+				for i, btn in pairs(tabBoxButtons) do
 					btn.TextColor3 = Color3.fromRGB(150, 150, 155)
 					btn.UIStroke.Color = Color3.fromRGB(50, 50, 55)
 					tabBoxPages[i].Visible = false
@@ -1364,7 +1354,7 @@ function library:CreateTab(tabName)
 				end
 				
 				bar.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						sliding = true
 						updateSlider(input)
 					end
@@ -1406,7 +1396,7 @@ function library:CreateTab(tabName)
 				local listLayout = Instance.new("UIListLayout")
 				listLayout.Parent = listFrame
 				
-				for _, option in pairs(optionsList) do 
+				for _, option in pairs(optionsList) do
 					local optBtn = Instance.new("TextButton")
 					optBtn.Size = UDim2.new(1, 0, 0, 20)
 					optBtn.BackgroundTransparency = 1
@@ -1515,5 +1505,3 @@ function library:CreateTab(tabName)
 	end
 	return pageElements
 end
-
-return library
