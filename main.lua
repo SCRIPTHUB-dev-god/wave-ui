@@ -4,6 +4,8 @@ local playerGui = localPlayer:WaitForChild("PlayerGui")
 local userInputService = game:GetService("UserInputService")
 local tweenService = game:GetService("TweenService")
 
+local library = {}
+
 local oldGui = playerGui:FindFirstChild("PremiumMobileGui")
 if oldGui then
 	oldGui:Destroy()
@@ -106,7 +108,7 @@ end)
 
 local waveDivider = Instance.new("Frame")
 waveDivider.Name = "WaveDivider"
-waveDivider.Size = UDim2.new(0, 1, 0, 18)
+waveDivider.Size = UDim2.new(0, 168, 0.5, -9)
 waveDivider.Position = UDim2.new(0, 168, 0.5, -9)
 waveDivider.BackgroundColor3 = Color3.fromRGB(55, 55, 60)
 waveDivider.BorderSizePixel = 0
@@ -516,7 +518,6 @@ local pages = {}
 local tabs = {}
 local currentTabIndex = 1
 local isTransitioning = false
-local library = {}
 
 function library:CreateWindow(config)
 	if config.title then
@@ -1008,7 +1009,7 @@ function library:CreateTab(tabName)
 			dropFrame.Size = UDim2.new(1, 0, 0, 24)
 			dropFrame.BackgroundColor3 = Color3.fromRGB(34, 34, 36)
 			dropFrame.ClipsDescendants = true
-			dropFrame.Parent = dropFrame
+			dropFrame.Parent = boxContent
 			Instance.new("UICorner", dropFrame).CornerRadius = UDim.new(0, 5)
 			local str = Instance.new("UIStroke", dropFrame)
 			str.Color = Color3.fromRGB(50, 50, 55)
@@ -1500,8 +1501,9 @@ function library:CreateTab(tabName)
 			return tabElements
 		end
 		
-		updateDimensions()
 		return innerElements
 	end
 	return pageElements
 end
+
+return library
