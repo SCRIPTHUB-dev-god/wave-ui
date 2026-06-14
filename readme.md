@@ -6,47 +6,51 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wav
 ```luau
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wave-ui/refs/heads/main/main.lua"))()
 
-library:SetTopTags({"MAIN", "VIP", "7D"})
-
 local window = library:CreateWindow({
-	title = "New Premium Hub",
-	desc = "VVIP Client Version",
-	footer = "wave ui: v1.4 patched",
+	title = "Premium Hub Tester",
+	desc = "Full API Integration Framework Inside Mobile Screen",
+	footer = "wave ui: v1.3 loaded",
 	open = true
 })
 
-local mainTab = library:CreateTab("Main Features")
+library:SetTopTags({"MAIN", "VIP"})
 
-local leftGroup = mainTab:CreateGroupBox("Left Frame", "left", "open")
-local rightGroup = mainTab:CreateGroupBox("Right Frame", "right", "open")
-local allsideGroup = mainTab:CreateGroupBox("Full Frame", "allside", "open")
+local combatTab = library:CreateTab("Combat Frame")
+local leftGroup = combatTab:CreateGroupBox("Self Options", "left", "open")
+local rightGroup = combatTab:CreateGroupBox("Target Setup", "right", "open")
+local allsideGroup = combatTab:CreateGroupBox("Subsystem Router", "allside", "open")
 
-local groupTabs = allsideGroup:CreateTabs()
-local subTab1 = groupTabs:CreateTab("Combat")
-local subTab2 = groupTabs:CreateTab("Visuals")
-
-subTab1:CreateButton("Kill All Players", function()
-	print("Executing Kill All...")
+leftGroup:CreateToggle("Fly System", false, function(state)
+	print("Fly state updated:", state)
 end)
 
-subTab1:CreateToggle("Aimbot", false, function(state)
-	print("Aimbot status:", state)
+leftGroup:CreateSlider("Walkspeed Multiplier", 16, 500, 16, function(value)
+	print("Walkspeed adjusted:", value)
 end)
 
-subTab2:CreateToggle("Player ESP", false, function(state)
-	print("ESP status:", state)
+rightGroup:CreateInput("Target Player", "Username here...", function(text, enter)
+	print("Input submitted:", text, "Enter key:", enter)
 end)
 
-subTab2:CreateColorPicker("ESP Color", Color3.fromRGB(0, 255, 120), function(color)
-	print("Color changed")
+rightGroup:CreateDropdown("Hit Priority", {"Head", "HumanoidRootPart", "Torso"}, function(selection)
+	print("Dropdown selection:", selection)
 end)
 
-leftGroup:CreateSlider("Walkspeed", 16, 250, 16, function(value)
-	print("Speed changed to:", value)
-end)
+local subTab1 = allsideGroup:tabbox("Main Frame")
+local subTab2 = allsideGroup:tabbox("Secondary Frame")
 
-rightGroup:CreateDropdown("Teleport to", {"Spawn", "Shop", "Arena"}, "Spawn", function(selected)
-	print("Teleporting to:", selected)
-end)
+if subTab1 then
+	subTab1:CreateLabel("Core Subsystem Status: Valid")
+	subTab1:CreateDivider()
+	subTab1:CreateButton("Initialize Script Processing", function()
+		print("Subtab 1 system activation executed.")
+	end)
+end
 
+if subTab2 then
+	subTab2:CreateParagraph("This interface section processes visual and environmental overrides asynchronously inside the hub frame structure.")
+	subTab2:CreateToggle("Full ESP Network", false, function(state)
+		print("Subtab 2 feature status:", state)
+	end)
+end
 ```
