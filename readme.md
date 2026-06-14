@@ -6,18 +6,17 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wav
 ```luau
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SCRIPTHUB-dev-god/wave-ui/refs/heads/main/main.lua"))()
 
+library:SetTopTags({"MAIN", "VIP", "7D"})
+
 local window = library:CreateWindow({
 	title = "New Premium Hub",
 	desc = "VVIP Client Version",
-	toggletitle = "Maximize UI",
 	footer = "wave ui: v1.4 patched",
 	open = true
 })
 
-library:SetTopTags({"MAIN", "VIP", "7D"})
-
-local mainTab = window:CreateTab("Combat")
-local miscTab = window:CreateTab("Misc")
+local mainTab = library:CreateTab("Combat")
+local miscTab = library:CreateTab("Misc")
 
 local combatGroup = mainTab:CreateGroupBox("Main Frame", "allside", "open")
 local subGroup = mainTab:CreateGroupBox("Sub Frame", "left", "close")
@@ -46,31 +45,30 @@ combatGroup:CreateInput("Custom Speed Value", "Type speed...", function(text, en
 	print("Input submitted:", text, "Pressed Enter:", enterPressed)
 end)
 
-local multiTabBox = subGroup:tabbox()
-local aimbotPage = multiTabBox:AddTab("Aimbot Config")
-local espPage = multiTabBox:AddTab("ESP Config")
+local multiTabBox = subGroup:tabbox("Aimbot Config")
+local multiTabBox2 = subGroup:tabbox("ESP Config")
 
-aimbotPage:CreateLabel("Aimbot Sub-Settings")
-aimbotPage:CreateParagraph("Pengaturan sensitivitas tingkat lanjut.")
-aimbotPage:CreateDivider()
+multiTabBox:CreateLabel("Aimbot Sub-Settings")
+multiTabBox:CreateParagraph("Pengaturan sensitivitas tingkat lanjut.")
+multiTabBox:CreateDivider()
 
-aimbotPage:CreateButton("Reset Config", function()
+multiTabBox:CreateButton("Reset Config", function()
 	print("Config Reset!")
 end)
 
-aimbotPage:CreateToggle("Team Check", true, function(state)
+multiTabBox:CreateToggle("Team Check", true, function(state)
 	print("Team check:", state)
 end)
 
-aimbotPage:CreateSlider("FOV Radius", 30, 300, 100, function(value)
+multiTabBox:CreateSlider("FOV Radius", 30, 300, 100, function(value)
 	print("FOV Radius:", value)
 end)
 
-aimbotPage:CreateDropdown("Prediction Mode", {"Low", "Medium", "High"}, function(mode)
+multiTabBox:CreateDropdown("Prediction Mode", {"Low", "Medium", "High"}, function(mode)
 	print("Prediction set to:", mode)
 end)
 
-aimbotPage:CreateInput("Blacklist User", "Username...", function(text)
+multiTabBox:CreateInput("Blacklist User", "Username...", function(text)
 	print("Blacklisted:", text)
 end)
 
